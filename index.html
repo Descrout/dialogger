@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="lib/jquery-3.5.1.min.js"></script>
+  <script src="lib/jquery-ui.min.js"></script>
+  <script src="lib/jstree.min.js"></script>
+  <script src="lib/p5.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
+  <link rel="stylesheet" type="text/css" href="css/style.min.css">
+
+  <meta charset="utf-8">
+  <title>Dialogger</title>
+</head>
+
+<body>
+  <input type="file" id="saveOpener" style="display:none">
+
+  <div id="jsTreeDiv" style="width: 20vw;float: left;height:100vh;"></div>
+  <div id="canvasDiv" style="width: 80vw;float: left;height:100vh;"></div>
+
+  <div id="character-creation" title="Create a character">
+    <form>
+      <fieldset>
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name" value="New Character" class="text ui-widget-content ui-corner-all">
+        <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+      </fieldset>
+    </form>
+  </div>
+
+  <script src="ui.js"></script>
+  <script src="editor.js"></script>
+  <script src="explorer.js"></script>
+  <script src="camera.js"></script>
+  <script src="sketch.js"></script>
+</body>
+
+</html>
