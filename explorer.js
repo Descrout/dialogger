@@ -1,7 +1,10 @@
 class Explorer {
+    static tempFields = null;
+    static editedNode = null;
+
     static dialog = $("#character-creation").dialog({
         autoOpen: false,
-        height: 400,
+        height: 450,
         width: 350,
         modal: true,
         buttons: {
@@ -11,6 +14,7 @@ class Explorer {
             }
         },
         close: function () {
+            $("#addField").off('click');
             Explorer.form[0].reset();
         }
     });
@@ -60,10 +64,75 @@ class Explorer {
         return $("#jsTreeDiv").jstree(true);
     }
 
-    static editedNode = null;
+    static refreshFields() {
+        $("#fieldHolder").empty();
+        for(let field of Explorer.fields) {
+            const div = document.createElement("div");
+            div.style.width = "100%";
+            div.style.border = "1px solid";
+            div.style.padding = "2px";
+            div.style.marginTop = "5px";
+            div.style.marginBottom = "5px";
+            //div.style.float = "left";
+
+            const nameField = document.createElement("input");
+            nameField.setAttribute("type", "text");
+            nameField.style.width = "55%";
+            nameField.style.display = "inline-block";
+            nameField.style.marginLeft = "5px";
+            nameField.value = field.name;
+            nameField.onchange = (e) => {
+                field.name = e.target.value;
+            };
+
+            const valueField = document.createElement("input");
+            valueField.setAttribute("type", "number");
+            valueField.style.width = "30%";
+            valueField.style.display = "inline-block";
+            valueField.style.marginLeft = "5px";
+            valueField.value = field.value;
+            valueField.onchange = (e) => {
+                field.value = e.target.value;
+            };
+
+            const removeButton = document.createElement("button");
+            removeButton.setAttribute("type", "button");
+            removeButton.innerHTML = "X";
+            removeButton.onclick = () => {
+                Explorer.fields = Explorer.fields.filter(function(ele){ 
+                    return ele != field; 
+                });
+                Explorer.refreshFields();
+            };
+
+            div.appendChild(removeButton);
+            div.appendChild(nameField);
+            div.appendChild(valueField);
+
+            $("#fieldHolder").append(div);
+        }
+    }
+
+    static addField() {
+        Explorer.fields.push({name:"New Field", value: 0});
+        Explorer.refreshFields();
+    }
 
     static characterDClick(node) {
         Explorer.editedNode = node;
+
+        if(node.data.fields){
+            Explorer.fields = JSON.parse(JSON.stringify(node.data.fields));
+        }else {
+            Explorer.fields = [];
+        }
+        
+        Explorer.refreshFields();
+                    
+        $("#addField").click( () => {
+            Explorer.addField();
+        });
+
         $( "#name" ).val(node.text);
         Explorer.dialog.dialog( "option", "title", "Edit the Character" );
         Explorer.dialog.dialog("open");
@@ -91,18 +160,32 @@ class Explorer {
         return true;
     }
 
+    static checkFields() {
+        for(let field1 of Explorer.fields) {
+            for(let field2 of Explorer.fields) {
+                if(field1 != field2 && field1.name === field2.name) {
+                    alert("Character fields should be unique!");
+                    return false;
+                }
+            }  
+        }
+        return true;
+    }
+
     static manageCharacter() {
         const tree = Explorer.tree();
         const name =  $( "#name" ).val();
         let node = Explorer.editedNode;
 
         if(!Explorer.checkCharName(tree, name, node)) return;
+        if(!Explorer.checkFields()) return;
 
         if(node) {
+            node.data.fields = JSON.parse(JSON.stringify(Explorer.fields));
             tree.rename_node(node, name);
             Explorer.editedNode = null;
         }else {
-            node = tree.create_node(1, { text: name, icon: 'jstree-file', a_attr:{type:'file'} });
+            node = tree.create_node(1, { text: name, icon: 'jstree-file', a_attr:{type:'file'}, data: {fields: JSON.parse(JSON.stringify(Explorer.fields))}});
         }
         
         tree.deselect_all();
@@ -118,8 +201,15 @@ class Explorer {
                 "seperator_before": false,
                 "seperator_after": false,
                 "label": "Create",
-                "action": function (obj) {
+                "action":  (obj) => {
                     Explorer.editedNode = null;
+                    Explorer.fields = [];
+                    Explorer.refreshFields();
+
+                    $("#addField").click( () => {
+                        Explorer.addField();
+                    });
+                    
                     Explorer.dialog.dialog( "option", "title", "Create a Character" );
                     Explorer.dialog.dialog("open");
                 }
