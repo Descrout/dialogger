@@ -4,16 +4,17 @@ let editor;
 function setup() {
   Explorer.init();
 
-  let canvasDiv = document.getElementById("canvasDiv");
+  const canvasDiv = document.getElementById("canvasDiv");
 
   canvasDiv.oncontextmenu = function (e) {
     e.preventDefault();
   };
 
-  let canvas = createCanvas(canvasDiv.clientWidth, canvasDiv.clientHeight);
+  const canvas = createCanvas(canvasDiv.clientWidth, canvasDiv.clientHeight);
   canvas.parent("canvasDiv");
 
   editor = new Editor();
+  windowResized();
 }
 
 function keyPressed() {
@@ -23,9 +24,14 @@ function keyPressed() {
 }
 
 function windowResized() {
-  let canvasDiv = document.getElementById("canvasDiv");
-  resizeCanvas(canvasDiv.clientWidth, canvasDiv.clientHeight);
+  const jsTreeDiv = document.getElementById("jsTreeDiv");
+  const canvasDiv = document.getElementById("canvasDiv");
+            
+  jsTreeDiv.style.width = `${Explorer.resizerPos}px`;
+  canvasDiv.style.width = `${windowWidth - Explorer.resizerPos - 2}px`;
 
+  resizeCanvas(canvasDiv.clientWidth, canvasDiv.clientHeight);
+  console.log(canvasDiv.clientWidth);
   editor.resize();
   render();
 }

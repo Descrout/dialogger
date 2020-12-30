@@ -1,6 +1,7 @@
 class Explorer {
     static tempFields = null;
     static editedNode = null;
+    static resizerPos = 200;
 
     static dialog = $("#character-creation").dialog({
         autoOpen: false,
@@ -26,13 +27,16 @@ class Explorer {
     });
 
     static init() {
-        const jsTreeDiv = document.getElementById("jsTreeDiv");
-        jsTreeDiv.oncontextmenu = function (e) {
-            e.preventDefault();
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+
+        const resizer = document.getElementById("resizer");
+        resizer.ondrag = (e) => {
+            if(e.clientX < 100 || e.clientX > 400) return;
+            Explorer.resizerPos = e.clientX;
+            windowResized();
         };
 
-
-        document.addEventListener('contextmenu', event => event.preventDefault());
 
         const tree = $('#jsTreeDiv').jstree({
             'core': {
