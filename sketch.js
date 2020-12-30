@@ -17,9 +17,9 @@ function setup() {
 }
 
 function keyPressed() {
+  if(editor.pause) return;
   if (keyCode === 32)
     camera.reset();
-
 }
 
 function windowResized() {
@@ -27,20 +27,26 @@ function windowResized() {
   resizeCanvas(canvasDiv.clientWidth, canvasDiv.clientHeight);
 
   editor.resize();
+  render();
 }
 
 function mouseDragged() {
+  if(editor.pause) return;
   if (mouseButton === CENTER) 
     camera.drag();
 }
 
 function mouseWheel(event) {
+  if(editor.pause) return;
   camera.updateScale(event.delta);
-  editor.downPanel.slider.value(camera.scale);
 }
 
 function draw() {
   if(editor.pause) return;
+  render();
+}
+
+function render() {
   push();
   camera.update();
   editor.draw();
