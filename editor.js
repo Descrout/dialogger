@@ -1,5 +1,7 @@
 class Editor {
     constructor() {
+        this.pause = false;
+        
         this.upPanel = new UpPanel();
         this.downPanel = new DownPanel();
 

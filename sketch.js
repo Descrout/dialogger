@@ -40,6 +40,7 @@ function mouseWheel(event) {
 }
 
 function draw() {
+  if(editor.pause) return;
   push();
   camera.update();
   editor.draw();

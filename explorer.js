@@ -16,6 +16,7 @@ class Explorer {
         close: function () {
             $("#addField").off('click');
             Explorer.form[0].reset();
+            editor.pause = false;
         }
     });
 
@@ -139,6 +140,7 @@ class Explorer {
         $( "#name" ).val(node.text);
         Explorer.dialog.dialog( "option", "title", "Edit the Character" );
         Explorer.dialog.dialog("open");
+        editor.pause = true;
     }
 
     static dialogDClick(node) {
@@ -215,6 +217,7 @@ class Explorer {
                     
                     Explorer.dialog.dialog( "option", "title", "Create a Character" );
                     Explorer.dialog.dialog("open");
+                    editor.pause = true;
                 }
             }
         };
