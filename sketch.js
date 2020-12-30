@@ -25,6 +25,8 @@ function keyPressed() {
 function windowResized() {
   let canvasDiv = document.getElementById("canvasDiv");
   resizeCanvas(canvasDiv.clientWidth, canvasDiv.clientHeight);
+
+  editor.resize();
 }
 
 function mouseDragged() {
@@ -34,6 +36,7 @@ function mouseDragged() {
 
 function mouseWheel(event) {
   camera.updateScale(event.delta);
+  editor.downPanel.slider.value(camera.scale);
 }
 
 function draw() {

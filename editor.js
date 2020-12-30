@@ -1,6 +1,7 @@
 class Editor {
     constructor() {
         this.upPanel = new UpPanel();
+        this.downPanel = new DownPanel();
 
         this.upPanel.addChild(new Button("Save", 10, 10, Editor.save));
         this.upPanel.addChild(new Button("Load", 120, 10, Editor.load));
@@ -58,7 +59,12 @@ class Editor {
         this.drawBg();
     }
 
+    resize(){
+        this.downPanel.refreshPanel();
+    }
+
     drawStatic() {
         this.upPanel.sync();
+        this.downPanel.sync();
     }
 }

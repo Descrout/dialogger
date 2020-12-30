@@ -30,6 +30,9 @@ class Explorer {
             e.preventDefault();
         };
 
+
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
         const tree = $('#jsTreeDiv').jstree({
             'core': {
                 "check_callback": true,

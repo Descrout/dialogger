@@ -37,6 +37,40 @@ class UIElement {
     }
 }
 
+class DownPanel extends UIElement {
+    constructor() {
+        super(0, height - 32);
+        this.h = 32;
+
+        this.slider = createSlider(0.40, 4.0, 1.0, 0.1);
+        this.slider.style('width', '100px');
+        this.slider.input(() => this.sChanged());
+
+        this.refreshPanel();
+    }
+
+    sChanged() {
+        camera.scale = this.slider.value();
+        camera.rawToPos();
+    }
+
+    refreshPanel() {
+        this.relativeY = height - 32;
+
+        const canvasDiv = document.getElementById("canvasDiv");
+        this.slider.position(canvasDiv.getBoundingClientRect().x + width - 120, height - 25);
+    }
+
+    draw() {
+        stroke(200);
+        fill(255);
+        rect(this.x, this.y, width, this.h);
+        fill(0);
+        noStroke();
+        text(`${camera.scale.toFixed(1)}`, this.x + width - 140, this.y + 22);
+        text(`${floor(camera.x)}, ${floor(camera.y)}`, this.x + 10, this.y + 20);
+    }
+}
 
 class UpPanel extends UIElement {
     constructor() {
