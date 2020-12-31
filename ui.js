@@ -86,9 +86,9 @@ class UpPanel extends UIElement {
 }
 
 class Button extends UIElement {
-    constructor(val, x, y, clicked) {
+    constructor(val, x, y, clicked, size) {
         super(x, y);
-        this.w = 100;
+        this.w = size || 100;
         this.h = 40;
         this.clicked = clicked;
         this.onColor = color(150, 100, 50);
@@ -103,7 +103,7 @@ class Button extends UIElement {
     }
 
     pressing() {
-        return (this.isOn() && mouseIsPressed);
+        return (this.isOn() && mouseIsPressed && mouseButton == LEFT);
     }
 
     draw() {
@@ -127,6 +127,6 @@ class Button extends UIElement {
         rect(this.x, this.y, this.w, this.h);
         noStroke();
         fill(0);
-        text(this.val, this.x + this.w / 2 - 12, this.y + this.h / 2 + 5);
+        text(this.val, this.x + this.w / 3, this.y + this.h / 2 + 5);
     }
 }

@@ -6,10 +6,6 @@ function setup() {
 
   const canvasDiv = document.getElementById("canvasDiv");
 
-  canvasDiv.oncontextmenu = function (e) {
-    e.preventDefault();
-  };
-
   const canvas = createCanvas(canvasDiv.clientWidth, canvasDiv.clientHeight);
   canvas.parent("canvasDiv");
 
@@ -31,7 +27,6 @@ function windowResized() {
   canvasDiv.style.width = `${windowWidth - Explorer.resizerPos - 2}px`;
 
   resizeCanvas(canvasDiv.clientWidth, canvasDiv.clientHeight);
-  console.log(canvasDiv.clientWidth);
   editor.resize();
   render();
 }

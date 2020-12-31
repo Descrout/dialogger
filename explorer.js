@@ -32,7 +32,7 @@ class Explorer {
 
         const resizer = document.getElementById("resizer");
         resizer.ondrag = (e) => {
-            if(e.clientX < 100 || e.clientX > 400) return;
+            if (e.clientX < 100 || e.clientX > 400) return;
             Explorer.resizerPos = e.clientX;
             windowResized();
         };
@@ -49,23 +49,32 @@ class Explorer {
             "plugins": ["contextmenu"],
             "contextmenu": {
                 "items": (node) => {
-                    if (node.a_attr.type == "folder")
-                        return Explorer.getFolderContext(node);
-                    else
-                        return Explorer.getFileContext(node);
+                    
+                    switch(node.parent) {
+                        case "#":
+                            if(node.id == 1) {
+                                return Explorer.getCharacterFolderContext(node);
+                            }else if(node.id == 2) {
+                                return Explorer.getDialogFolderContext(node);
+                            }
+                        case "1":
+                            return Explorer.getCharacterContext(node);
+                        case "2":
+                            return Explorer.getDialogContext(node);
+                    }
                 }
             }
         });
-        
-        tree.bind("dblclick.jstree",  (event) => {
+
+        tree.bind("dblclick.jstree", (event) => {
             const node_li = $(event.target).closest("li");
             const node = Explorer.tree().get_node(node_li);
-            if (node.parent == 1) 
+            if (node.parent == 1)
                 Explorer.characterDClick(node);
-            else if(node.parent == 2) 
+            else if (node.parent == 2)
                 Explorer.dialogDClick(node);
-            
-         });
+
+        });
     }
 
     static tree() {
@@ -74,7 +83,7 @@ class Explorer {
 
     static refreshFields() {
         $("#fieldHolder").empty();
-        for(let field of Explorer.fields) {
+        for (let field of Explorer.fields) {
             const div = document.createElement("div");
             div.style.width = "100%";
             div.style.border = "1px solid";
@@ -107,8 +116,8 @@ class Explorer {
             removeButton.setAttribute("type", "button");
             removeButton.innerHTML = "X";
             removeButton.onclick = () => {
-                Explorer.fields = Explorer.fields.filter(function(ele){ 
-                    return ele != field; 
+                Explorer.fields = Explorer.fields.filter(function (ele) {
+                    return ele != field;
                 });
                 Explorer.refreshFields();
             };
@@ -122,27 +131,30 @@ class Explorer {
     }
 
     static addField() {
-        Explorer.fields.push({name:"New Field", value: 0});
+        Explorer.fields.push({
+            name: "New Field",
+            value: 0
+        });
         Explorer.refreshFields();
     }
 
     static characterDClick(node) {
         Explorer.editedNode = node;
 
-        if(node.data.fields){
+        if (node.data.fields) {
             Explorer.fields = JSON.parse(JSON.stringify(node.data.fields));
-        }else {
+        } else {
             Explorer.fields = [];
         }
-        
+
         Explorer.refreshFields();
-                    
-        $("#addField").click( () => {
+
+        $("#addField").click(() => {
             Explorer.addField();
         });
 
-        $( "#name" ).val(node.text);
-        Explorer.dialog.dialog( "option", "title", "Edit the Character" );
+        $("#name").val(node.text);
+        Explorer.dialog.dialog("option", "title", "Edit the Character");
         Explorer.dialog.dialog("open");
         editor.pause = true;
     }
@@ -152,15 +164,15 @@ class Explorer {
     }
 
     static checkCharName(tree, name, node) {
-        if(name.length < 3) {
+        if (name.length < 3) {
             alert("Pick a longer name!");
             return false;
         }
 
-        for(let node_id of tree.get_node(1).children) {
+        for (let node_id of tree.get_node(1).children) {
             const character = tree.get_node(node_id);
 
-            if(character.text == name && character != node) {
+            if (character.text == name && character != node) {
                 alert("Pick a different name!");
                 return false;
             }
@@ -170,56 +182,78 @@ class Explorer {
     }
 
     static checkFields() {
-        for(let field1 of Explorer.fields) {
-            for(let field2 of Explorer.fields) {
-                if(field1 != field2 && field1.name === field2.name) {
+        for (let field1 of Explorer.fields) {
+            for (let field2 of Explorer.fields) {
+                if (field1 != field2 && field1.name === field2.name) {
                     alert("Character fields should be unique!");
                     return false;
                 }
-            }  
+            }
         }
         return true;
     }
 
     static manageCharacter() {
         const tree = Explorer.tree();
-        const name =  $( "#name" ).val();
+        const name = $("#name").val();
         let node = Explorer.editedNode;
 
-        if(!Explorer.checkCharName(tree, name, node)) return;
-        if(!Explorer.checkFields()) return;
+        if (!Explorer.checkCharName(tree, name, node)) return;
+        if (!Explorer.checkFields()) return;
 
-        if(node) {
+        if (node) {
             node.data.fields = JSON.parse(JSON.stringify(Explorer.fields));
             tree.rename_node(node, name);
             Explorer.editedNode = null;
-        }else {
-            node = tree.create_node(1, { text: name, icon: 'jstree-file', a_attr:{type:'file'}, data: {fields: JSON.parse(JSON.stringify(Explorer.fields))}});
+        } else {
+            node = tree.create_node(1, {
+                text: name,
+                icon: 'jstree-file',
+                a_attr: {
+                    type: 'file'
+                },
+                data: {
+                    fields: JSON.parse(JSON.stringify(Explorer.fields))
+                }
+            });
         }
-        
+
         tree.deselect_all();
         tree.select_node(node);
 
         Explorer.dialog.dialog("close");
     }
 
-    static getFolderContext(node) {
-        if (node.id != 1) return;
+
+    static getDialogFolderContext(node) {
         return {
             "Create": {
                 "seperator_before": false,
                 "seperator_after": false,
                 "label": "Create",
-                "action":  (obj) => {
+                "action": (obj) => {
+                    editor.newDialog();
+                }
+            }
+        };
+    }
+
+    static getCharacterFolderContext(node) {
+        return {
+            "Create": {
+                "seperator_before": false,
+                "seperator_after": false,
+                "label": "Create",
+                "action": (obj) => {
                     Explorer.editedNode = null;
                     Explorer.fields = [];
                     Explorer.refreshFields();
 
-                    $("#addField").click( () => {
+                    $("#addField").click(() => {
                         Explorer.addField();
                     });
-                    
-                    Explorer.dialog.dialog( "option", "title", "Create a Character" );
+
+                    Explorer.dialog.dialog("option", "title", "Create a Character");
                     Explorer.dialog.dialog("open");
                     editor.pause = true;
                 }
@@ -227,7 +261,7 @@ class Explorer {
         };
     }
 
-    static getFileContext(node) {
+    static getDialogContext(node) {
         const tree = Explorer.tree();
 
         return {
@@ -236,9 +270,31 @@ class Explorer {
                 "separator_after": false,
                 "label": "Rename",
                 "action": function (obj) {
+                    tree.edit(node);
+                }
+            },
+            "Remove": {
+                "separator_before": false,
+                "separator_after": false,
+                "label": "Remove",
+                "action": function (obj) {
+                    editor.removeDialogNode(node);
+                }
+            }
+        };
+    }
+
+    static getCharacterContext(node) {
+        const tree = Explorer.tree();
+        return {
+            "Rename": {
+                "separator_before": false,
+                "separator_after": false,
+                "label": "Rename",
+                "action": function (obj) {
                     const oldName = node.text;
                     tree.edit(node, null, (n, succ, canc) => {
-                        if(succ && !canc  && !Explorer.checkCharName(tree, n.text, n)) {
+                        if (succ && !canc && !Explorer.checkCharName(tree, n.text, n)) {
                             tree.rename_node(n, oldName);
                         }
                     });
