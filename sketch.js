@@ -31,6 +31,16 @@ function windowResized() {
   render();
 }
 
+function mouseInScreen() {
+  return !(mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height);
+}
+
+function mousePressed() {
+  if(!mouseInScreen()) return;
+  Explorer.tree().deselect_all();
+  editor.mousePressed();
+}
+
 function mouseDragged() {
   if(editor.pause) return;
   if (mouseButton === CENTER) 

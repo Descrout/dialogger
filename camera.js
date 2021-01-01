@@ -18,8 +18,6 @@ class Camera {
     drag() {
         this.rawX -= movedX;
         this.rawY -= movedY;
-        this.rawX = max(this.rawX, 0.0);
-        this.rawY = max(this.rawY, 0.0);
         this.rawToPos();
     }
 
@@ -31,6 +29,8 @@ class Camera {
     }
 
     rawToPos() {
+        this.rawX = max(this.rawX, 0.0);
+        this.rawY = max(this.rawY, 0.0);
         this.x = this.rawX / this.scale;
         this.y = this.rawY / this.scale;
     }

@@ -22,6 +22,13 @@ class Editor {
         this.upPanel.addChild(new Button("Dialogue", 300, 10, () => this.newDialog(), 120));
     }
 
+    mousePressed() {
+        this.upPanel.listenMousePress();
+        for(const dia of Array.from(this.dialogs.values()).reverse()) {
+            if(dia.listenMousePress()) break;
+        }
+    }
+
     newDialog() {
         let x = 200,
             y = 200;
@@ -42,7 +49,8 @@ class Editor {
             text: data.name,
             icon: 'jstree-file',
             a_attr: {
-                type: 'file'
+                type: 'file',
+                draggable: false
             },
             data: data
         });
@@ -54,17 +62,11 @@ class Editor {
     removeDialogNode(dia_node) {
         Explorer.tree().delete_node(dia_node);
         this.dialogs.delete(dia_node.id);
-        //this.dialogs = this.dialogs.filter(function(ele) { 
-        //    return ele.node != dia_node.id; 
-        //});
     }
 
     removeDialog(dia) {
         Explorer.tree().delete_node(dia.node);
-        this.dialogs.delete(dia.node);
-        //this.dialogs = this.dialogs.filter((ele) => { 
-        //    return ele != dia; 
-        //});
+        this.dialogs.delete(dia.node.id);
     }
 
     static save() {

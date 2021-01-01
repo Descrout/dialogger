@@ -37,6 +37,7 @@ class Explorer {
             windowResized();
         };
 
+        $('#jsTreeDiv').draggable({ disabled: true });
 
         const tree = $('#jsTreeDiv').jstree({
             'core': {
@@ -45,7 +46,7 @@ class Explorer {
                     "url": "root.json",
                     "dataType": "json"
                 }
-            },
+            }, 
             "plugins": ["contextmenu"],
             "contextmenu": {
                 "items": (node) => {
@@ -214,7 +215,8 @@ class Explorer {
                 text: name,
                 icon: 'jstree-file',
                 a_attr: {
-                    type: 'file'
+                    type: 'file',
+                    draggable: false
                 },
                 data: {
                     fields: JSON.parse(JSON.stringify(Explorer.fields))

@@ -2,7 +2,8 @@
     "id": 1,
     "text": "Characters",
     "a_attr": {
-        "type": "folder"
+        "type": "folder",
+        "draggable": false
     },
     "state": {
         "loaded": true,
@@ -14,7 +15,8 @@
     "id": 2,
     "text": "Dialogs",
     "a_attr": {
-        "type": "folder"
+        "type": "folder",
+        "draggable": false
     },
     "state": {
         "loaded": true,
