@@ -160,7 +160,11 @@ class Explorer {
     }
 
     static dialogDClick(node) {
-
+        camera.rawX = node.data.x - width / 2 + 100;
+        camera.rawY = node.data.y - height  / 2 + 100;
+        camera.scale = 1.0;
+        camera.rawToPos();
+        editor.downPanel.slider.value(camera.scale);
     }
 
     static checkCharName(tree, name, node) {

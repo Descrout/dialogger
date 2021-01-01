@@ -1,15 +1,14 @@
 class Dialog extends UIElement {
-    constructor(x, y, data) {
-        super(x, y);
+    constructor(node) {
+        super(node.data.x, node.data.y);
         this.w = 300;
         this.h = 200;
-        this.node = null;
-        this.data = data || {
-            name: "New Dialogue",
-            x: x,
-            y: y,
-            text: "This is a dialogue",
-        };
+        this.node = node;
+        this.dragging = false;
+
+        this.dragButton = new Button(null, 0, 0, () => {}, 250);
+        this.dragButton.isWorld = true;
+        this.addChild(this.dragButton);
     }
 
     draw() {
@@ -20,7 +19,19 @@ class Dialog extends UIElement {
 
     sync() {
         super.sync();
-        this.data.x = this.x;
-        this.data.y = this.y;
+        this.node.data.x = this.relativeX;
+        this.node.data.y = this.relativeY;
+        
+        if(this.dragging) {
+            this.relativeX += movedX / camera.scale;
+            this.relativeY += movedY / camera.scale;
+        }
+        this.relativeY = max(this.relativeY, editor.upPanel.h);
+
+        if(this.dragButton.pressing()) {
+            this.dragging = true;
+        }
+
+        if(!mouseIsPressed) this.dragging = false;
     }
 }

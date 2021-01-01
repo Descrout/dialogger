@@ -27,6 +27,9 @@ class UIElement {
             this.y += this.parent.y;
         }
 
+        this.x = max(this.x, 0);
+        this.y = max(this.y, 0);
+
         if (!this.visible) return;
 
         this.draw();
@@ -96,15 +99,29 @@ class Button extends UIElement {
         this.pressColor = color(255, 0, 0);
         this.releasable = false;
         this.val = val;
+        this.isWorld = false;
     }
 
     isOn() {
+        if(this.isWorld) 
+            return this.isOnWorld();
+
         return (mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h);
+    }
+
+    isOnWorld() {
+        const x = this.x * camera.scale - camera.rawX;
+        const y = this.y * camera.scale - camera.rawY;
+        const w = this.w * camera.scale;
+        const h = this.h * camera.scale;
+
+        return (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h);
     }
 
     pressing() {
         return (this.isOn() && mouseIsPressed && mouseButton == LEFT);
     }
+
 
     draw() {
         stroke(200);
@@ -125,8 +142,10 @@ class Button extends UIElement {
             
 
         rect(this.x, this.y, this.w, this.h);
-        noStroke();
-        fill(0);
-        text(this.val, this.x + this.w / 3, this.y + this.h / 2 + 5);
+        if(this.val){
+            noStroke();
+            fill(0);
+            text(this.val, this.x + this.w / 3, this.y + this.h / 2 + 5);
+        }
     }
 }

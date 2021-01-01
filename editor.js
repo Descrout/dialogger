@@ -1,3 +1,12 @@
+function defaultDialogData(x, y) {
+    return {
+        name: "New Dialogue",
+        x: x,
+        y: y,
+        text: "This is a dialogue",
+    };
+}
+
 class Editor {
     constructor() {
         this.pause = false;
@@ -5,7 +14,7 @@ class Editor {
         this.upPanel = new UpPanel();
         this.downPanel = new DownPanel();
 
-        this.dialogs = [];
+        this.dialogs = new Map();
 
         this.upPanel.addChild(new Button("Save", 10, 10, Editor.save));
         this.upPanel.addChild(new Button("Load", 120, 10, () => this.load()));
@@ -17,8 +26,8 @@ class Editor {
         let x = 200,
             y = 200;
 
-        if (this.dialogs.length > 0) {
-            const last = this.dialogs[this.dialogs.length - 1];
+        if (this.dialogs.size > 0) {
+            const last = Array.from(this.dialogs)[this.dialogs.size-1][1];
             x = last.x + 400;
             y = last.y;
         }
@@ -27,30 +36,35 @@ class Editor {
     }
 
     addDialog(x, y) {
-        const dialog = new Dialog(x, y);
-        this.dialogs.push(dialog);
-        dialog.node = Explorer.tree().create_node(2, {
-            text: dialog.data.name,
+        const data = defaultDialogData(x, y);
+
+        const node_id = Explorer.tree().create_node(2, {
+            text: data.name,
             icon: 'jstree-file',
             a_attr: {
                 type: 'file'
             },
-            data: dialog.data
+            data: data
         });
+
+        const dialog = new Dialog(Explorer.tree().get_node(node_id));
+        this.dialogs.set(node_id, dialog);
     }
 
     removeDialogNode(dia_node) {
         Explorer.tree().delete_node(dia_node);
-        this.dialogs = this.dialogs.filter(function(ele) { 
-            return ele.node != dia_node.id; 
-        });
+        this.dialogs.delete(dia_node.id);
+        //this.dialogs = this.dialogs.filter(function(ele) { 
+        //    return ele.node != dia_node.id; 
+        //});
     }
 
     removeDialog(dia) {
         Explorer.tree().delete_node(dia.node);
-        this.dialogs = this.dialogs.filter((ele) => { 
-            return ele != dia; 
-        });
+        this.dialogs.delete(dia.node);
+        //this.dialogs = this.dialogs.filter((ele) => { 
+        //    return ele != dia; 
+        //});
     }
 
     static save() {
@@ -76,18 +90,18 @@ class Editor {
                     return;
                 }
 
-                this.dialogs = [];
+                this.dialogs.clear();
 
                 Explorer.tree().settings.core.data = parsed;
                 Explorer.tree().refresh();
 
-                for (let dia_node of parsed[1].children) {
-                    const data = dia_node.data;
-                    const dia = new Dialog(data.x, data.y, data);
-                    dia.node = dia_node;
-                    this.dialogs.push(dia);
-                }
-
+                $("#jsTreeDiv").on('refresh.jstree', () => {
+                    for (let node_id of Explorer.tree().get_node(2).children) {
+                        const dia_node = Explorer.tree().get_node(node_id);
+                        const dia = new Dialog(dia_node);
+                        this.dialogs.set(node_id, dia);
+                    }
+                });
             };
             reader.readAsText(file);
         });
@@ -122,7 +136,7 @@ class Editor {
     draw() {
         this.drawBg();
 
-        for (let dia of this.dialogs) {
+        for (const dia of this.dialogs.values()) {
             dia.sync();
         }
     }
