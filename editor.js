@@ -1,9 +1,10 @@
 function defaultDialogData(x, y) {
     return {
-        name: "New Dialogue",
         x: x,
         y: y,
-        text: "This is a dialogue",
+        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+        character: null, //id
+        time_limit: 0
     };
 }
 
@@ -46,7 +47,7 @@ class Editor {
         const data = defaultDialogData(x, y);
 
         const node_id = Explorer.tree().create_node(2, {
-            text: data.name,
+            text: "New Dialogue",
             icon: 'jstree-file',
             a_attr: {
                 type: 'file',
@@ -57,6 +58,10 @@ class Editor {
 
         const dialog = new Dialog(Explorer.tree().get_node(node_id));
         this.dialogs.set(node_id, dialog);
+    }
+
+    getDialog(node_id) {
+        return this.dialogs.get(node_id);
     }
 
     removeDialogNode(dia_node) {

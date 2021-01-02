@@ -35,6 +35,25 @@
     </form>
   </div>
 
+  <div id="dialog-edit" title="Edit the dialogue">
+    <form id="dialog-edit-form">
+      <fieldset>
+        <label for="dialog_name">Name</label>
+        <input type="text" name="dialog_name" id="dialog_name" value="" class="text ui-widget-content ui-corner-all">
+        
+        <label for="select_character">Character</label>
+        <select name="select_character" id="select_character" class="ui-widget-content ui-corner-all"></select>
+
+        <label for="time_limit">Time Limit</label>
+        <input type="number" id="time_limit" name="time_limit" min="0" max="120" value="0" class="ui-widget-content ui-corner-all">
+
+        <label for="dialog_text">Dialogue</label>
+        <textarea id="dialog_text" name="dialog_text" form="dialog-edit-form" class="text ui-widget-content ui-corner-all"></textarea>
+        <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+      </fieldset>
+    </form>
+  </div>
+
   <script src="ui.js"></script>
   <script src="dialog.js"></script>
   <script src="editor.js"></script>

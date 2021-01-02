@@ -23,7 +23,7 @@ class Camera {
 
     updateScale(delta) {
         this.scale += delta / 500;
-        this.scale = constrain(this.scale, 0.40, 4.0);
+        this.scale = constrain(this.scale, 0.5, 2.5);
         this.rawToPos();
         editor.downPanel.slider.value(camera.scale);
     }

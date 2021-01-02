@@ -36,7 +36,7 @@ function mouseInScreen() {
 }
 
 function mousePressed() {
-  if(!mouseInScreen()) return;
+  if(editor.pause || !mouseInScreen()) return;
   Explorer.tree().deselect_all();
   editor.mousePressed();
 }

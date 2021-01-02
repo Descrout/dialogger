@@ -1,7 +1,6 @@
-class Explorer {
-    static tempFields = null;
+class CharacterEditor {
+    static fields = null;
     static editedNode = null;
-    static resizerPos = 200;
 
     static dialog = $("#character-creation").dialog({
         autoOpen: false,
@@ -9,82 +8,85 @@ class Explorer {
         width: 350,
         modal: true,
         buttons: {
-            "Save": Explorer.manageCharacter,
+            "Save": CharacterEditor.finishEditing,
             Cancel: () => {
-                Explorer.dialog.dialog("close");
+                CharacterEditor.dialog.dialog("close");
             }
         },
         close: function () {
             $("#addField").off('click');
-            Explorer.form[0].reset();
+            CharacterEditor.form[0].reset();
             editor.pause = false;
         }
     });
 
     static form = this.dialog.find("form").on("submit", function (event) {
         event.preventDefault();
-        Explorer.manageCharacter();
+        CharacterEditor.finishEditing();
     });
 
-    static init() {
-        document.addEventListener('contextmenu', event => event.preventDefault());
+    static openEditing(node) {
+        let title = "Create a Character";
+        CharacterEditor.editedNode = node;
 
+        if (node && node.data.fields) {
+            CharacterEditor.fields = JSON.parse(JSON.stringify(node.data.fields));
+        } else {
+            CharacterEditor.fields = [];
+        }
 
-        const resizer = document.getElementById("resizer");
-        resizer.ondrag = (e) => {
-            if (e.clientX < 100 || e.clientX > 400) return;
-            Explorer.resizerPos = e.clientX;
-            windowResized();
-        };
+        CharacterEditor.refreshFields();
 
-        $('#jsTreeDiv').draggable({ disabled: true });
+        if(node) {
+            $("#name").val(node.text);
+            title = "Edit the Character";
+        }
 
-        const tree = $('#jsTreeDiv').jstree({
-            'core': {
-                "check_callback": true,
-                'data': {
-                    "url": "root.json",
-                    "dataType": "json"
-                }
-            }, 
-            "plugins": ["contextmenu"],
-            "contextmenu": {
-                "items": (node) => {
-                    
-                    switch(node.parent) {
-                        case "#":
-                            if(node.id == 1) {
-                                return Explorer.getCharacterFolderContext(node);
-                            }else if(node.id == 2) {
-                                return Explorer.getDialogFolderContext(node);
-                            }
-                        case "1":
-                            return Explorer.getCharacterContext(node);
-                        case "2":
-                            return Explorer.getDialogContext(node);
-                    }
-                }
-            }
-        });
-
-        tree.bind("dblclick.jstree", (event) => {
-            const node_li = $(event.target).closest("li");
-            const node = Explorer.tree().get_node(node_li);
-            if (node.parent == 1)
-                Explorer.characterDClick(node);
-            else if (node.parent == 2)
-                Explorer.dialogDClick(node);
-
-        });
+        CharacterEditor.dialog.dialog("option", "title", title);
+        CharacterEditor.dialog.dialog("open");
+        editor.pause = true;
     }
 
-    static tree() {
-        return $("#jsTreeDiv").jstree(true);
+    static finishEditing() {
+        const tree = Explorer.tree();
+        const name = $("#name").val();
+        let node = CharacterEditor.editedNode;
+
+        if (!CharacterEditor.checkCharName(tree, name, node)) return;
+        if (!CharacterEditor.checkFields()) return;
+
+        if (node) {
+            node.data.fields = JSON.parse(JSON.stringify(CharacterEditor.fields));
+            tree.rename_node(node, name);
+            CharacterEditor.editedNode = null;
+        } else {
+            node = tree.create_node(1, {
+                text: name,
+                icon: 'jstree-file',
+                a_attr: {
+                    type: 'file',
+                    draggable: false
+                },
+                data: {
+                    fields: JSON.parse(JSON.stringify(CharacterEditor.fields))
+                }
+            });
+        }
+
+        tree.deselect_all();
+        tree.select_node(node);
+
+        CharacterEditor.dialog.dialog("close");
     }
 
     static refreshFields() {
+        $("#addField").off('click');
+        $("#addField").click(() => {
+            CharacterEditor.addField();
+        });
+
         $("#fieldHolder").empty();
-        for (let field of Explorer.fields) {
+        for (let field of CharacterEditor.fields) {
             const div = document.createElement("div");
             div.style.width = "100%";
             div.style.border = "1px solid";
@@ -117,10 +119,10 @@ class Explorer {
             removeButton.setAttribute("type", "button");
             removeButton.innerHTML = "X";
             removeButton.onclick = () => {
-                Explorer.fields = Explorer.fields.filter(function (ele) {
+                CharacterEditor.fields = CharacterEditor.fields.filter((ele) => {
                     return ele != field;
                 });
-                Explorer.refreshFields();
+                CharacterEditor.refreshFields();
             };
 
             div.appendChild(removeButton);
@@ -132,40 +134,11 @@ class Explorer {
     }
 
     static addField() {
-        Explorer.fields.push({
+        CharacterEditor.fields.push({
             name: "New Field",
             value: 0
         });
-        Explorer.refreshFields();
-    }
-
-    static characterDClick(node) {
-        Explorer.editedNode = node;
-
-        if (node.data.fields) {
-            Explorer.fields = JSON.parse(JSON.stringify(node.data.fields));
-        } else {
-            Explorer.fields = [];
-        }
-
-        Explorer.refreshFields();
-
-        $("#addField").click(() => {
-            Explorer.addField();
-        });
-
-        $("#name").val(node.text);
-        Explorer.dialog.dialog("option", "title", "Edit the Character");
-        Explorer.dialog.dialog("open");
-        editor.pause = true;
-    }
-
-    static dialogDClick(node) {
-        camera.rawX = node.data.x - width / 2 + 100;
-        camera.rawY = node.data.y - height  / 2 + 100;
-        camera.scale = 1.0;
-        camera.rawToPos();
-        editor.downPanel.slider.value(camera.scale);
+        CharacterEditor.refreshFields();
     }
 
     static checkCharName(tree, name, node) {
@@ -187,8 +160,8 @@ class Explorer {
     }
 
     static checkFields() {
-        for (let field1 of Explorer.fields) {
-            for (let field2 of Explorer.fields) {
+        for (let field1 of CharacterEditor.fields) {
+            for (let field2 of CharacterEditor.fields) {
                 if (field1 != field2 && field1.name === field2.name) {
                     alert("Character fields should be unique!");
                     return false;
@@ -197,39 +170,71 @@ class Explorer {
         }
         return true;
     }
+}
 
-    static manageCharacter() {
-        const tree = Explorer.tree();
-        const name = $("#name").val();
-        let node = Explorer.editedNode;
+class Explorer {
+    static resizerPos = 200;
 
-        if (!Explorer.checkCharName(tree, name, node)) return;
-        if (!Explorer.checkFields()) return;
+    static init() {
+        document.addEventListener('contextmenu', event => event.preventDefault());
 
-        if (node) {
-            node.data.fields = JSON.parse(JSON.stringify(Explorer.fields));
-            tree.rename_node(node, name);
-            Explorer.editedNode = null;
-        } else {
-            node = tree.create_node(1, {
-                text: name,
-                icon: 'jstree-file',
-                a_attr: {
-                    type: 'file',
-                    draggable: false
-                },
-                data: {
-                    fields: JSON.parse(JSON.stringify(Explorer.fields))
+        const resizer = document.getElementById("resizer");
+        resizer.ondrag = (e) => {
+            if (e.clientX < 100 || e.clientX > 400) return;
+            Explorer.resizerPos = e.clientX;
+            windowResized();
+        };
+
+        const tree = $('#jsTreeDiv').jstree({
+            'core': {
+                "check_callback": true,
+                'data': {
+                    "url": "root.json",
+                    "dataType": "json"
                 }
-            });
-        }
+            },
+            "plugins": ["contextmenu"],
+            "contextmenu": {
+                "items": (node) => {
 
-        tree.deselect_all();
-        tree.select_node(node);
+                    switch (node.parent) {
+                        case "#":
+                            if (node.id == 1) {
+                                return Explorer.getCharacterFolderContext(node);
+                            } else if (node.id == 2) {
+                                return Explorer.getDialogFolderContext(node);
+                            }
+                            case "1":
+                                return Explorer.getCharacterContext(node);
+                            case "2":
+                                return Explorer.getDialogContext(node);
+                    }
+                }
+            }
+        });
 
-        Explorer.dialog.dialog("close");
+        tree.bind("dblclick.jstree", (event) => {
+            const node_li = $(event.target).closest("li");
+            const node = Explorer.tree().get_node(node_li);
+            if (node.parent == 1)
+                CharacterEditor.openEditing(node);
+            else if (node.parent == 2)
+                Explorer.dialogDClick(node);
+
+        });
     }
 
+    static tree() {
+        return $("#jsTreeDiv").jstree(true);
+    }
+
+    static dialogDClick(node) {
+        camera.rawX = node.data.x - width / 2 + 100;
+        camera.rawY = node.data.y - height / 2 + 100;
+        camera.scale = 1.0;
+        camera.rawToPos();
+        editor.downPanel.slider.value(camera.scale);
+    }
 
     static getDialogFolderContext(node) {
         return {
@@ -251,17 +256,7 @@ class Explorer {
                 "seperator_after": false,
                 "label": "Create",
                 "action": (obj) => {
-                    Explorer.editedNode = null;
-                    Explorer.fields = [];
-                    Explorer.refreshFields();
-
-                    $("#addField").click(() => {
-                        Explorer.addField();
-                    });
-
-                    Explorer.dialog.dialog("option", "title", "Create a Character");
-                    Explorer.dialog.dialog("open");
-                    editor.pause = true;
+                    CharacterEditor.openEditing();
                 }
             }
         };
@@ -300,7 +295,7 @@ class Explorer {
                 "action": function (obj) {
                     const oldName = node.text;
                     tree.edit(node, null, (n, succ, canc) => {
-                        if (succ && !canc && !Explorer.checkCharName(tree, n.text, n)) {
+                        if (succ && !canc && !CharacterEditor.checkCharName(tree, n.text, n)) {
                             tree.rename_node(n, oldName);
                         }
                     });

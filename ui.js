@@ -22,7 +22,7 @@ class UIElement {
     }
 
     listenMousePress() {
-        const p = false;
+        let p = false;
         for (let child of this.children) {
             if (child.listenMousePress()) {
                 p = true;
@@ -84,7 +84,7 @@ class DownPanel extends UIElement {
     constructor() {
         super(0, height - 32, width, 32);
 
-        this.slider = createSlider(0.40, 4.0, 1.0, 0.1);
+        this.slider = createSlider(0.5, 2.5, 1.0, 0.1);
         this.slider.style('width', '100px');
         this.slider.input(() => this.sChanged());
 
