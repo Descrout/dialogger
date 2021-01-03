@@ -1,8 +1,8 @@
 class UIElement {
     constructor(x, y, w, h) {
         this.parent = null;
-        this.x = x;
-        this.y = y;
+        this.x = -1000;
+        this.y = -1000;
         this.w = w;
         this.h = h;
         this.relativeX = x;
@@ -77,7 +77,7 @@ class UIElement {
     }
 }
 
-class DownPanel extends UIElement {
+class BottomMenu extends UIElement {
     constructor() {
         super(0, height - 32, width, 32);
 
@@ -85,7 +85,7 @@ class DownPanel extends UIElement {
         this.slider.style('width', '100px');
         this.slider.input(() => this.sChanged());
 
-        this.refreshPanel();
+        this.refreshMenu();
     }
 
     sChanged() {
@@ -93,7 +93,7 @@ class DownPanel extends UIElement {
         camera.rawToPos();
     }
 
-    refreshPanel() {
+    refreshMenu() {
         this.relativeY = height - 32;
 
         const canvasDiv = document.getElementById("canvasDiv");
@@ -111,7 +111,7 @@ class DownPanel extends UIElement {
     }
 }
 
-class UpPanel extends UIElement {
+class TopMenu extends UIElement {
     constructor() {
         super(0, 0, width, 64);
     }
@@ -162,8 +162,13 @@ class Node extends UIElement{
         this.offColor = color(240);
 
         this.parent = parent;
-        this.connected = null;
         this.receiver = receiver;
+
+        if(receiver) {
+            this.from = [];
+        } else {
+            this.to = null;
+        }
     }
 
     mousePressed() {
@@ -171,7 +176,7 @@ class Node extends UIElement{
     }
 
     draw() {
-        stroke(200);
+        stroke(100);
         if (this.isOn()) {
             fill(this.onColor);
         } else {
@@ -179,5 +184,63 @@ class Node extends UIElement{
         }
         
         rect(this.x, this.y, this.w, this.h);
+        if(!this.receiver) {
+            line(this.x, this.y + 16, this.x - 10, this.y + 16);
+            fill(100);
+        }else {
+            line(this.x + 32, this.y + 16, this.x + 42, this.y + 16);
+        }
+        ellipse(this.x + 16, this.y + 16, 10, 10);
+    }
+}
+
+class Panel extends UIElement {
+    constructor(node, w, h) {
+        super(node.data.x, node.data.y, w + 100, h);
+        this.node = node;
+        this.dragging = false;
+
+        this.dragButton = new Button(this.node.text, 50, 0, () => {
+            this.dragging = true;
+            this.bringFront();
+        }, w);
+
+        this.receiver = new Node(-42, 44, this, true);
+
+        this.addChild(new Button('✎', 0, 0, () => this.editButton(), 50));
+        this.addChild(this.dragButton);
+        this.addChild(new Button("X", 310, 0, () => this.closeButton(), 50));
+        this.addChild(this.receiver);
+    }
+
+    mousePressed() {
+        this.bringFront();
+    }
+
+    draw() {
+        stroke(140);
+        fill(230);
+        rect(this.x, this.y, this.w, this.h);
+    }
+
+    bringFront() {}
+    editButton() {}
+    closeButton() {}
+
+    sync() {
+        super.sync();
+        if (!mouseIsPressed || !mouseInScreen()) this.dragging = false;
+
+
+        if (this.dragging) {
+            this.relativeX += movedX / camera.scale;
+            this.relativeY += movedY / camera.scale;
+            this.relativeX = max(this.relativeX, 0);
+            this.relativeY = max(this.relativeY, editor.topMenu.h / camera.scale);
+        }
+        this.node.data.x = this.relativeX;
+        this.node.data.y = this.relativeY;
+
+        this.dragButton.val = this.node.text;
     }
 }

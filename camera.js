@@ -12,7 +12,7 @@ class Camera {
         this.rawX = 0;
         this.rawY = 0;
         this.rawToPos();
-        editor.downPanel.slider.value(camera.scale);
+        editor.bottomMenu.slider.value(camera.scale);
     }
 
     drag() {
@@ -25,7 +25,7 @@ class Camera {
         this.scale += delta / 500;
         this.scale = constrain(this.scale, 0.5, 2.5);
         this.rawToPos();
-        editor.downPanel.slider.value(camera.scale);
+        editor.bottomMenu.slider.value(camera.scale);
     }
 
     rawToPos() {

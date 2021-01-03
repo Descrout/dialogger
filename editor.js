@@ -12,23 +12,23 @@ class Editor {
     constructor() {
         this.pause = false;
 
-        this.upPanel = new UpPanel();
-        this.downPanel = new DownPanel();
+        this.topMenu = new TopMenu();
+        this.bottomMenu = new BottomMenu();
 
         this.dialogs = new Map();
 
-        this.upPanel.addChild(new Button("Save", 10, 10, Editor.save));
-        this.upPanel.addChild(new Button("Load", 120, 10, () => this.load()));
+        this.topMenu.addChild(new Button("Save", 10, 10, Editor.save));
+        this.topMenu.addChild(new Button("Load", 120, 10, () => this.load()));
 
-        this.upPanel.addChild(new Button("Dialogue", 300, 10, () => this.newDialog(), 120));
+        this.topMenu.addChild(new Button("Dialogue", 320, 10, () => this.newDialog(), 120));
 
-        for(const el of this.upPanel.children) {
+        for(const el of this.topMenu.children) {
             el.isWorld = false;
         }
     }
 
     mousePressed() {
-        this.upPanel.listenMousePress();
+        this.topMenu.listenMousePress();
 
         const dialogs = Array.from(this.dialogs.values()).reverse();
         for(const dia of dialogs) {
@@ -42,7 +42,7 @@ class Editor {
 
         if (this.dialogs.size > 0) {
             const last = Array.from(this.dialogs)[this.dialogs.size-1][1];
-            x = last.x + 400;
+            x = last.x + 500;
             y = last.y;
         }
 
@@ -155,11 +155,11 @@ class Editor {
     }
 
     resize() {
-        this.downPanel.refreshPanel();
+        this.bottomMenu.refreshMenu();
     }
 
     drawStatic() {
-        this.upPanel.sync();
-        this.downPanel.sync();
+        this.topMenu.sync();
+        this.bottomMenu.sync();
     }
 }

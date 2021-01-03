@@ -59,7 +59,7 @@ class Explorer {
         camera.rawY = node.data.y - height / 2 + 100;
         camera.scale = 1.0;
         camera.rawToPos();
-        editor.downPanel.slider.value(camera.scale);
+        editor.bottomMenu.slider.value(camera.scale);
         editor.dialogs.get(node.id).bringFront();
     }
 
