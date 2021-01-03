@@ -31,10 +31,10 @@ class DialogEditor {
 
         const charSelect = document.getElementById("select_character");
         $("#select_character").empty();
-        for(const char_id of Explorer.tree().get_node(1).children) {
+        for (const char_id of Explorer.tree().get_node(1).children) {
             const character = Explorer.tree().get_node(char_id);
             const option = new Option(character.text, char_id);
-            if(node.data.character == char_id)
+            if (node.data.character == char_id)
                 option.selected = true;
             charSelect.add(option);
         }
@@ -49,7 +49,7 @@ class DialogEditor {
 
     static finishEditing() {
         const node = DialogEditor.tempNode;
-        
+
         const charSelect = document.getElementById("select_character");
         const selOp = charSelect.options[charSelect.selectedIndex];
 
@@ -57,11 +57,11 @@ class DialogEditor {
         node.data.time_limit = $("#time_limit").val();
         node.data.text = $("#dialog_text").val();
 
-        if(selOp) {
+        if (selOp) {
             node.data.character = selOp.value;
             editor.getDialog(node.id).characterNode = Explorer.tree().get_node(selOp.value);
         }
-        
+
         DialogEditor.tempNode = null;
         DialogEditor.dialog.dialog("close");
     }
@@ -69,42 +69,45 @@ class DialogEditor {
 
 class Dialog extends UIElement {
     constructor(node) {
-        super(node.data.x, node.data.y, 360 , 200);
+        super(node.data.x, node.data.y, 360, 200);
         this.node = node;
         this.characterNode = Explorer.tree().get_node(node.data.character);
         this.dragging = false;
 
-        this.editButton = new Button('✎', 0, 0, () => {
-            DialogEditor.openEditing(this.node);
-        }, 50);
-        this.editButton.isWorld = true;
-
         this.dragButton = new Button(this.node.text, 50, 0, () => {
             this.dragging = true;
-            editor.dialogs.delete(this.node.id);
-            editor.dialogs.set(this.node.id, this);
+            this.bringFront();
         }, 260);
-        this.dragButton.isWorld = true;
 
-        this.closeButton = new Button("X", 310, 0, () => {
-            editor.removeDialog(this);
-        }, 50);
-        this.closeButton.isWorld = true;
+        this.receiver = new Node(0, 0, this, true);
 
-        this.addChild(this.editButton);
+        this.addChild(new Button('✎', 0, 0, () => {
+            DialogEditor.openEditing(this.node);
+        }, 50));
+        
         this.addChild(this.dragButton);
-        this.addChild(this.closeButton);
+
+        this.addChild(new Button("X", 310, 0, () => {
+            editor.removeDialog(this);
+        }, 50));
+
+        this.addChild(this.receiver);
     }
 
     mousePressed() {
+        this.bringFront();
+    }
 
+    bringFront() {
+        editor.dialogs.delete(this.node.id);
+        editor.dialogs.set(this.node.id, this);
     }
 
     draw() {
         stroke(140);
         fill(230);
         rect(this.x, this.y, this.w, this.h);
-        
+
         line(this.x, this.y + 80, this.x + this.w, this.y + 80);
         line(this.x + this.w / 2, this.y + 40, this.x + this.w / 2, this.y + 80);
 
@@ -117,10 +120,10 @@ class Dialog extends UIElement {
 
     sync() {
         super.sync();
-        if(!mouseIsPressed || !mouseInScreen()) this.dragging = false;
+        if (!mouseIsPressed || !mouseInScreen()) this.dragging = false;
 
 
-        if(this.dragging) {
+        if (this.dragging) {
             this.relativeX += movedX / camera.scale;
             this.relativeY += movedY / camera.scale;
             this.relativeX = max(this.relativeX, 0);
@@ -128,7 +131,7 @@ class Dialog extends UIElement {
         }
         this.node.data.x = this.relativeX;
         this.node.data.y = this.relativeY;
-        
+
         this.dragButton.val = this.node.text;
     }
 }

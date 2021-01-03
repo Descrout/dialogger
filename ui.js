@@ -1,15 +1,15 @@
 class UIElement {
     constructor(x, y, w, h) {
         this.parent = null;
-        this.x = 0;
-        this.y = 0;
+        this.x = x;
+        this.y = y;
         this.w = w;
         this.h = h;
         this.relativeX = x;
         this.relativeY = y;
         this.children = [];
         this.visible = true;
-        this.isWorld = false;
+        this.isWorld = true;
     }
 
     addChild(child) {
@@ -22,20 +22,17 @@ class UIElement {
     }
 
     listenMousePress() {
-        let p = false;
-        for (let child of this.children) {
-            if (child.listenMousePress()) {
-                p = true;
-                break
-            }
+        for (let i = this.children.length - 1; i >= 0; i--) {
+            if (this.children[i].listenMousePress()) 
+                return true;
         }
 
         if (this.isOn()) {
             this.mousePressed();
-            p = true;
+            return true;
         }
 
-        return p;
+        return false;
     }
 
     isOn() {
@@ -155,5 +152,32 @@ class Button extends UIElement {
             fill(0);
             text(this.val, this.x + this.w / 3, this.y + this.h / 2 + 5);
         }
+    }
+}
+
+class Node extends UIElement{
+    constructor(x, y, parent, receiver) {
+        super(x, y, 32, 32);
+        this.onColor = color(255);
+        this.offColor = color(240);
+
+        this.parent = parent;
+        this.connected = null;
+        this.receiver = receiver;
+    }
+
+    mousePressed() {
+
+    }
+
+    draw() {
+        stroke(200);
+        if (this.isOn()) {
+            fill(this.onColor);
+        } else {
+            fill(this.offColor);
+        }
+        
+        rect(this.x, this.y, this.w, this.h);
     }
 }

@@ -45,7 +45,7 @@ class Explorer {
             if (node.parent == 1)
                 CharacterEditor.openEditing(node);
             else if (node.parent == 2)
-                Explorer.dialogDClick(node);
+                Explorer.doubleClickDialog(node);
 
         });
     }
@@ -54,12 +54,13 @@ class Explorer {
         return $("#jsTreeDiv").jstree(true);
     }
 
-    static dialogDClick(node) {
+    static doubleClickDialog(node) {
         camera.rawX = node.data.x - width / 2 + 100;
         camera.rawY = node.data.y - height / 2 + 100;
         camera.scale = 1.0;
         camera.rawToPos();
         editor.downPanel.slider.value(camera.scale);
+        editor.dialogs.get(node.id).bringFront();
     }
 
     static getDialogFolderContext(node) {

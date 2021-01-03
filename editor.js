@@ -21,11 +21,17 @@ class Editor {
         this.upPanel.addChild(new Button("Load", 120, 10, () => this.load()));
 
         this.upPanel.addChild(new Button("Dialogue", 300, 10, () => this.newDialog(), 120));
+
+        for(const el of this.upPanel.children) {
+            el.isWorld = false;
+        }
     }
 
     mousePressed() {
         this.upPanel.listenMousePress();
-        for(const dia of Array.from(this.dialogs.values()).reverse()) {
+
+        const dialogs = Array.from(this.dialogs.values()).reverse();
+        for(const dia of dialogs) {
             if(dia.listenMousePress()) break;
         }
     }
