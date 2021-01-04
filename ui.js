@@ -186,6 +186,7 @@ class Node extends UIElement{
         this.onColor = color(255);
         this.offColor = color(240);
         this.receiver = receiver;
+        this.saveData = saveData;
         if(!receiver && saveData.id && editor.panels.has(saveData.id)) {
             this.lineRider = new LineRider(saveData, this, editor.getPanel(saveData.id).receiver);
 

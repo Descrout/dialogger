@@ -64,13 +64,13 @@ class Editor {
     nodeStop(endNode) {
         if(this.tempRider && this.tempRider.from.parent != endNode.parent){
             const node = this.tempRider.from;
+            const points = this.tempRider.saveData.points;
 
-            node.parent.node.data.time_path = {id: endNode.parent.node.id, 
-                type: endNode.parent.type, 
-                points: this.tempRider.saveData.points
-            };
+            node.saveData.id = endNode.parent.node.id;
+            node.saveData.type = endNode.parent.type; 
+            node.saveData.points = points;
 
-            node.lineRider = new LineRider(node.parent.node.data.time_path, node, endNode);
+            node.lineRider = new LineRider(node.saveData, node, endNode);
             this.tempRider = null;
         }
     }
