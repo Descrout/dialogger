@@ -4,6 +4,8 @@ class Camera {
         this.rawY = 0;
         this.x = 0;
         this.y = 0;
+        this.mouseX = 0;
+        this.mouseY = 0;
         this.scale = 1.0;
     }
 
@@ -36,7 +38,9 @@ class Camera {
     }
 
     update() {
-        translate(-camera.rawX, -camera.rawY);
-        scale(camera.scale);
+        this.mouseX = mouseX / this.scale + this.x;
+        this.mouseY = mouseY / this.scale + this.y;
+        translate(-this.rawX, -this.rawY);
+        scale(this.scale);
     }
 }

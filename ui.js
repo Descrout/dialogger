@@ -80,6 +80,7 @@ class UIElement {
 class BottomMenu extends UIElement {
     constructor() {
         super(0, height - 32, width, 32);
+        this.isWorld = false;
 
         this.slider = createSlider(0.5, 2.5, 1.0, 0.1);
         this.slider.style('width', '100px');
@@ -95,15 +96,16 @@ class BottomMenu extends UIElement {
 
     refreshMenu() {
         this.relativeY = height - 32;
-
+        this.w = width;
         const canvasDiv = document.getElementById("canvasDiv");
         this.slider.position(canvasDiv.getBoundingClientRect().x + width - 120, height - 25);
     }
 
+
     draw() {
         stroke(200);
         fill(255);
-        rect(this.x, this.y, width, this.h);
+        rect(this.x, this.y, this.w, this.h);
         fill(0);
         noStroke();
         text(`${camera.scale.toFixed(1)}`, this.x + width - 140, this.y + 22);
@@ -114,12 +116,13 @@ class BottomMenu extends UIElement {
 class TopMenu extends UIElement {
     constructor() {
         super(0, 0, width, 64);
+        this.isWorld = false;
     }
 
     draw() {
         stroke(200);
         fill(255);
-        rect(this.x, this.y, width, this.h);
+        rect(this.x, this.y, this.w, this.h);
     }
 }
 
@@ -155,24 +158,47 @@ class Button extends UIElement {
     }
 }
 
+class LineRider {
+    constructor(saveData, from, to) {
+        this.saveData = saveData;
+        this.from = from;
+        this.to = to;
+        if(to.parent)
+            to.parent.ins.push(from);
+    }
+
+    draw() {
+        noFill();
+        strokeWeight(3);
+        beginShape();
+        vertex(this.from.x + 16, this.from.y + 16);
+        for(const p of this.saveData.points) {
+            vertex(p.x, p.y);
+        }
+        vertex(this.to.x + 16, this.to.y + 16);
+        endShape();        
+    }
+}
+
 class Node extends UIElement{
-    constructor(x, y, parent, receiver) {
+    constructor(x, y, saveData, receiver) {
         super(x, y, 32, 32);
         this.onColor = color(255);
         this.offColor = color(240);
-
-        this.parent = parent;
         this.receiver = receiver;
+        if(!receiver && saveData.id && editor.panels.has(saveData.id)) {
+            this.lineRider = new LineRider(saveData, this, editor.getPanel(saveData.id).receiver);
 
-        if(receiver) {
-            this.from = [];
-        } else {
-            this.to = null;
         }
     }
 
     mousePressed() {
+        if(mouseButton != LEFT) return;
 
+        if(this.receiver) 
+            editor.nodeStop(this);
+        else 
+            editor.nodeStart(this);
     }
 
     draw() {
@@ -191,21 +217,26 @@ class Node extends UIElement{
             line(this.x + 32, this.y + 16, this.x + 42, this.y + 16);
         }
         ellipse(this.x + 16, this.y + 16, 10, 10);
+
     }
 }
 
 class Panel extends UIElement {
     constructor(node, w, h) {
         super(node.data.x, node.data.y, w + 100, h);
+        this.type = "panel";
         this.node = node;
         this.dragging = false;
+
+        this.ins = [];
+        this.outs = [];
 
         this.dragButton = new Button(this.node.text, 50, 0, () => {
             this.dragging = true;
             this.bringFront();
         }, w);
 
-        this.receiver = new Node(-42, 44, this, true);
+        this.receiver = new Node(-42, 44, null, true);
 
         this.addChild(new Button('✎', 0, 0, () => this.editButton(), 50));
         this.addChild(this.dragButton);
@@ -223,9 +254,32 @@ class Panel extends UIElement {
         rect(this.x, this.y, this.w, this.h);
     }
 
-    bringFront() {}
+    bringFront() {
+        editor.panels.delete(this.node.id);
+        editor.panels.set(this.node.id, this);
+    }
+
     editButton() {}
     closeButton() {}
+    createNodes() {}
+
+    clearNodes() {
+        for(const in_node of this.ins) {
+            in_node.lineRider.saveData.id = "";
+            in_node.lineRider.saveData.type = "";
+            in_node.lineRider.saveData.points = [];
+            in_node.lineRider = null;
+        }
+        
+        for(const out_node of this.outs) {
+            if(out_node.lineRider) {
+                const nextPanel = out_node.lineRider.to.parent;
+                nextPanel.ins = nextPanel.ins.filter((el) => {
+                    return el != out_node;
+                });
+            }
+        }
+    }
 
     sync() {
         super.sync();

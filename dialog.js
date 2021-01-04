@@ -59,7 +59,7 @@ class DialogEditor {
 
         if (selOp) {
             node.data.character = selOp.value;
-            editor.getDialog(node.id).characterNode = Explorer.tree().get_node(selOp.value);
+            editor.getPanel(node.id).characterNode = Explorer.tree().get_node(selOp.value);
         }
 
         DialogEditor.tempNode = null;
@@ -71,7 +71,12 @@ class Dialog extends Panel {
     constructor(node) {
         super(node, 260, 200);
         this.characterNode = Explorer.tree().get_node(node.data.character);
-        this.timePath = new Node(this.w + 10, 44, this, false);
+    }
+
+    createNodes() {
+        const saveData = this.node.data.time_path;
+        this.timePath = new Node(this.w + 10, 44, saveData, false);
+        this.outs.push(this.timePath);
         this.addChild(this.timePath);
     }
 
@@ -80,12 +85,7 @@ class Dialog extends Panel {
     }
 
     closeButton() {
-        editor.removeDialog(this);
-    }
-
-    bringFront() {
-        editor.dialogs.delete(this.node.id);
-        editor.dialogs.set(this.node.id, this);
+        editor.removePanel(this);
     }
 
     draw() {
