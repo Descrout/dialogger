@@ -12,6 +12,7 @@ function defaultDialogData(x, y) {
 
 class Editor {
     constructor() {
+        this.lastX = 500;
         this.pause = false;
         this.dragRider = null;
 
@@ -76,21 +77,12 @@ class Editor {
     }
 
     newPanel(type) {
-        let x = 200,
-            y = 200;
-
-        if (this.panels.size > 0) {
-            const last = Array.from(this.panels)[this.panels.size-1][1];
-            x = last.x + 500;
-            y = last.y;
-        }
-
         switch(type) {
             case "dialog":
-            this.addDialog(x, y);
+            this.addDialog(this.lastX, 500);
             break;
         }
-        
+        this.lastX += 500;
     }
 
     addDialog(x, y) {
@@ -108,6 +100,7 @@ class Editor {
 
         const dialog = new Dialog(Explorer.tree().get_node(node_id));
         dialog.createNodes();
+        dialog.focus();
         this.panels.set(node_id, dialog);
     }
 

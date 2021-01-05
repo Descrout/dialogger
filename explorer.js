@@ -38,21 +38,12 @@ class Explorer {
             if (node.parent == 1)
                 CharacterEditor.openEditing(node);
             else if(node.a_attr.type == "file")
-                Explorer.doubleClickPanel(node);
+                editor.getPanel(node.id).focus();
         });
     }
 
     static tree() {
         return $("#jsTreeDiv").jstree(true);
-    }
-
-    static doubleClickPanel(node) {
-        camera.rawX = node.data.x - width / 2 + 100;
-        camera.rawY = node.data.y - height / 2 + 100;
-        camera.scale = 1.0;
-        camera.rawToPos();
-        editor.bottomMenu.slider.value(camera.scale);
-        editor.getPanel(node.id).bringFront();
     }
 
     static getFolderCtx(node) {

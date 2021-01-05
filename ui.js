@@ -255,6 +255,13 @@ class Panel extends UIElement {
         rect(this.x, this.y, this.w, this.h);
     }
 
+    focus() {
+        camera.rawX = this.relativeX * camera.scale - width / 2 + this.w / 2 * camera.scale;
+        camera.rawY = this.relativeY * camera.scale - height / 2 + this.h / 2 * camera.scale;
+        camera.rawToPos();
+        this.bringFront();
+    }
+
     bringFront() {
         editor.panels.delete(this.node.id);
         editor.panels.set(this.node.id, this);
@@ -282,7 +289,13 @@ class Panel extends UIElement {
         }
     }
 
+    outView() {
+        return (this.relativeX + this.w + 48 < camera.x || this.relativeX - 48 > camera.x + camera.w ||
+                this.relativeY + this.h < camera.y || this.relativeY > camera.y + camera.h);
+    }
+
     sync() {
+        if(this.outView())  return;
         super.sync();
         if (!mouseIsPressed || !mouseInScreen()) this.dragging = false;
 
