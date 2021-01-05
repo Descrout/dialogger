@@ -127,8 +127,8 @@ class TopMenu extends UIElement {
 }
 
 class Button extends UIElement {
-    constructor(val, x, y, clicked, size) {
-        super(x, y, size || 100, 40);
+    constructor(val, x, y, clicked, w, h) {
+        super(x, y, w || 100, h || 40);
 
         this.clicked = clicked;
         this.onColor = color(255);
@@ -163,20 +163,37 @@ class LineRider {
         this.saveData = saveData;
         this.from = from;
         this.to = to;
-        if(to.parent)
+        
+        this.dragPoint = -1;
+
+        if(to.parent){
+            to.parent.ins = to.parent.ins.filter((el) => {
+                return el != from;
+            });
             to.parent.ins.push(from);
+        }  
     }
 
     draw() {
+        if (!mouseIsPressed || !mouseInScreen())
+            this.dragPoint = -1;
+
+        if (this.dragPoint != -1) {
+            this.saveData.points[this.dragPoint].x += movedX / camera.scale;
+            this.saveData.points[this.dragPoint].y += movedY / camera.scale;
+        }
+
         noFill();
         strokeWeight(3);
+        stroke(110);
         beginShape();
         vertex(this.from.x + 16, this.from.y + 16);
         for(const p of this.saveData.points) {
             vertex(p.x, p.y);
+            ellipse(p.x, p.y, 16, 16);
         }
         vertex(this.to.x + 16, this.to.y + 16);
-        endShape();        
+        endShape();
     }
 }
 
@@ -297,8 +314,8 @@ class Panel extends UIElement {
     sync() {
         if(this.outView())  return;
         super.sync();
-        if (!mouseIsPressed || !mouseInScreen()) this.dragging = false;
 
+        if (!mouseIsPressed || !mouseInScreen()) this.dragging = false;
 
         if (this.dragging) {
             this.relativeX += movedX / camera.scale;
@@ -306,6 +323,7 @@ class Panel extends UIElement {
             this.relativeX = max(this.relativeX, 0);
             this.relativeY = max(this.relativeY, editor.topMenu.h / camera.scale);
         }
+
         this.node.data.x = this.relativeX;
         this.node.data.y = this.relativeY;
 

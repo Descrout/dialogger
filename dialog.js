@@ -70,6 +70,7 @@ class DialogEditor {
 class Dialog extends Panel {
     constructor(node) {
         super(node, 260, 200);
+        this.type = "dialog";
         this.characterNode = Explorer.tree().get_node(node.data.character);
     }
 

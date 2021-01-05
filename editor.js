@@ -51,11 +51,31 @@ class Editor {
         }
 
 
-        if(emptyPress && this.tempRider && mouseButton == LEFT) {
-            this.tempRider.saveData.points.push({x: camera.mouseX, y: camera.mouseY});
-            this.dragRider = this.tempRider;
+        if(emptyPress) {
+            if(!this.tempRider){
+                for (const panel of this.panels.values()) {
+                    for(const node of panel.ins) {
+                        if(node.lineRider){
+                            const points = node.lineRider.saveData.points;
+                            for(let i = 0; i < points.length; i++) {
+                                let dx = camera.mouseX - points[i].x;
+                                let dy = camera.mouseY - points[i].y;
+                                if(dx * dx < 64 && dy * dy < 64){
+                                    if(mouseButton==LEFT)
+                                        node.lineRider.dragPoint = i;
+                                    else
+                                        points.splice(i, 1);
+                                    return;
+                                }
+                            }
+                        } 
+                    }
+                }
+            }else if(mouseButton == LEFT){
+                this.tempRider.saveData.points.push({x: camera.mouseX, y: camera.mouseY});
+                this.dragRider = this.tempRider;
+            }
         }
-        
     }
 
     nodeStart(startNode) {
