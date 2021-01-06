@@ -12,7 +12,6 @@ function defaultDialogData(x, y) {
 
 class Editor {
     constructor() {
-        this.lastX = 500;
         this.pause = false;
         this.dragRider = null;
 
@@ -99,15 +98,15 @@ class Editor {
     newPanel(type) {
         switch(type) {
             case "dialog":
-            this.addDialog(this.lastX, 500);
+            this.addDialog();
             break;
         }
-        this.lastX += 500;
     }
 
-    addDialog(x, y) {
+    addDialog() {
+        const x =  camera.x + camera.w / 2;
+        const y =  camera.y + camera.h / 2;
         const data = defaultDialogData(x, y);
-
         const node_id = Explorer.tree().create_node(2, {
             text: "New Dialogue",
             icon: 'jstree-file',
@@ -120,8 +119,8 @@ class Editor {
 
         const dialog = new Dialog(Explorer.tree().get_node(node_id));
         dialog.createNodes();
-        dialog.focus();
         this.panels.set(node_id, dialog);
+        dialog.focus();
     }
 
     getPanel(node_id) {

@@ -28,6 +28,8 @@ class Camera {
     updateScale(delta) {
         this.scale += delta / 500;
         this.scale = constrain(this.scale, 0.5, 2.5);
+        this.rawX = this.x * this.scale;
+        this.rawY = this.y * this.scale;
         this.rawToPos();
         editor.bottomMenu.slider.value(camera.scale);
     }

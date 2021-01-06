@@ -91,6 +91,8 @@ class BottomMenu extends UIElement {
 
     sChanged() {
         camera.scale = this.slider.value();
+        camera.rawX = camera.x * camera.scale;
+        camera.rawY = camera.y * camera.scale;
         camera.rawToPos();
     }
 
