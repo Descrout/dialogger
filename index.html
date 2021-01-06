@@ -19,7 +19,8 @@
   <input type="file" id="saveOpener" style="display:none">
 
   <div id="jsTreeDiv" style="float: left;height:100vh;" draggable="false"></div>
-  <div id="resizer" style="width: 2px;float: left;height:100vh;background-color: rgb(156, 154, 154);cursor: w-resize;" draggable="true"></div>
+  <div id="resizer" style="width: 2px;float: left;height:100vh;background-color: rgb(156, 154, 154);cursor: w-resize;"
+    draggable="true"></div>
   <div id="canvasDiv" style="float: left;height:100vh;" draggable="false"></div>
 
   <div id="character-edit" title="Create a character">
@@ -40,15 +41,17 @@
       <fieldset>
         <label for="dialog_name">Name</label>
         <input type="text" name="dialog_name" id="dialog_name" value="" class="text ui-widget-content ui-corner-all">
-        
+
         <label for="select_character">Character</label>
         <select name="select_character" id="select_character" class="ui-widget-content ui-corner-all"></select>
 
         <label for="time_limit">Time Limit</label>
-        <input type="number" id="time_limit" name="time_limit" min="0" max="120" value="0" class="ui-widget-content ui-corner-all">
+        <input type="number" id="time_limit" name="time_limit" min="0" max="120" value="0"
+          class="ui-widget-content ui-corner-all">
 
         <label for="dialog_text">Dialogue</label>
-        <textarea id="dialog_text" name="dialog_text" form="dialog-edit-form" class="text ui-widget-content ui-corner-all"></textarea>
+        <textarea id="dialog_text" name="dialog_text" form="dialog-edit-form"
+          class="text ui-widget-content ui-corner-all"></textarea>
         <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
       </fieldset>
     </form>

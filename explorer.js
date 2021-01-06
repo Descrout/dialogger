@@ -23,9 +23,9 @@ class Explorer {
             "contextmenu": {
                 "items": (node) => {
 
-                    if(node.a_attr.type == "folder")  {
+                    if (node.a_attr.type == "folder") {
                         return Explorer.getFolderCtx(node);
-                    }else {
+                    } else {
                         return Explorer.getFileCtx(node);
                     }
                 }
@@ -37,7 +37,7 @@ class Explorer {
             const node = Explorer.tree().get_node(node_li);
             if (node.parent == 1)
                 CharacterEditor.openEditing(node);
-            else if(node.a_attr.type == "file")
+            else if (node.a_attr.type == "file")
                 editor.getPanel(node.id).focus();
         });
     }
@@ -53,9 +53,9 @@ class Explorer {
                 "seperator_after": false,
                 "label": "Create",
                 "action": (obj) => {
-                    if(node.id == "1") {
+                    if (node.id == "1") {
                         CharacterEditor.openEditing();
-                    }else if(node.id == "2") {
+                    } else if (node.id == "2") {
                         editor.newPanel("dialog");
                     }
                 }
@@ -72,14 +72,14 @@ class Explorer {
                 "separator_after": false,
                 "label": "Rename",
                 "action": function (obj) {
-                    if(node.parent == "1") {
+                    if (node.parent == "1") {
                         const oldName = node.text;
                         tree.edit(node, null, (n, succ, canc) => {
                             if (succ && !canc && !CharacterEditor.checkCharName(tree, n.text, n)) {
                                 tree.rename_node(n, oldName);
                             }
                         });
-                    }else tree.edit(node);
+                    } else tree.edit(node);
                 }
             },
             "Remove": {
@@ -87,14 +87,14 @@ class Explorer {
                 "separator_after": false,
                 "label": "Remove",
                 "action": function (obj) {
-                    if(node.parent == "1") 
+                    if (node.parent == "1")
                         tree.delete_node(node);
-                    else 
+                    else
                         editor.removePanelViaNode(node);
                 }
             }
         };
     }
 
-  
+
 }

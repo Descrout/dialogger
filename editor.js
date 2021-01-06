@@ -25,69 +25,73 @@ class Editor {
 
         this.topMenu.addChild(new Button("Dialogue", 320, 10, () => this.newPanel("dialog"), 120));
 
-        for(const el of this.topMenu.children) {
+        for (const el of this.topMenu.children) {
             el.isWorld = false;
         }
     }
 
     mousePressed() {
-        if(mouseButton == CENTER) return;
+        if (mouseButton == CENTER) return;
         this.tempRider = this.dragRider;
         this.dragRider = null;
 
-        let emptyPress = !this.topMenu.listenMousePress();
+        if (this.topMenu.listenMousePress())
+            return;
 
-        if(this.bottomMenu.listenMousePress()) {
-            emptyPress = false;
-        }
+        if (this.bottomMenu.listenMousePress())
+            return;
 
         const panels = Array.from(this.panels.values()).reverse();
-        for(const panel of panels) {
-            if(panel.listenMousePress()) {
-                emptyPress = false;
-                break;
-            }
+        for (const panel of panels) {
+            if (panel.listenMousePress())
+                return;
         }
 
-
-        if(emptyPress) {
-            if(!this.tempRider){
-                for (const panel of this.panels.values()) {
-                    for(const node of panel.ins) {
-                        if(node.lineRider){
-                            const points = node.lineRider.saveData.points;
-                            for(let i = 0; i < points.length; i++) {
-                                let dx = camera.mouseX - points[i].x;
-                                let dy = camera.mouseY - points[i].y;
-                                if(dx * dx < 64 && dy * dy < 64){
-                                    if(mouseButton==LEFT)
-                                        node.lineRider.dragPoint = i;
-                                    else
-                                        points.splice(i, 1);
-                                    return;
-                                }
+        if (!this.tempRider) {
+            for (const panel of this.panels.values()) {
+                for (const node of panel.ins) {
+                    if (node.lineRider) {
+                        const points = node.lineRider.saveData.points;
+                        for (let i = 0; i < points.length; i++) {
+                            let dx = camera.mouseX - points[i].x;
+                            let dy = camera.mouseY - points[i].y;
+                            if (dx * dx < 64 && dy * dy < 64) {
+                                if (mouseButton == LEFT)
+                                    node.lineRider.dragPoint = i;
+                                else
+                                    points.splice(i, 1);
+                                return;
                             }
-                        } 
+                        }
                     }
                 }
-            }else if(mouseButton == LEFT){
-                this.tempRider.saveData.points.push({x: camera.mouseX, y: camera.mouseY});
-                this.dragRider = this.tempRider;
             }
+        } else if (mouseButton == LEFT) {
+            this.tempRider.saveData.points.push({
+                x: camera.mouseX,
+                y: camera.mouseY
+            });
+            this.dragRider = this.tempRider;
         }
+
     }
 
     nodeStart(startNode) {
-        this.dragRider = new LineRider({points: []}, startNode, {x: camera.mouseX, y: camera.mouseY});
+        this.dragRider = new LineRider({
+            points: []
+        }, startNode, {
+            x: camera.mouseX,
+            y: camera.mouseY
+        });
     }
 
     nodeStop(endNode) {
-        if(this.tempRider && this.tempRider.from.parent != endNode.parent){
+        if (this.tempRider && this.tempRider.from.parent != endNode.parent) {
             const node = this.tempRider.from;
             const points = this.tempRider.saveData.points;
 
             node.saveData.id = endNode.parent.node.id;
-            node.saveData.type = endNode.parent.type; 
+            node.saveData.type = endNode.parent.type;
             node.saveData.points = points;
 
             node.lineRider = new LineRider(node.saveData, node, endNode);
@@ -96,16 +100,16 @@ class Editor {
     }
 
     newPanel(type) {
-        switch(type) {
+        switch (type) {
             case "dialog":
-            this.addDialog();
-            break;
+                this.addDialog();
+                break;
         }
     }
 
     addDialog() {
-        const x =  camera.x + camera.w / 2;
-        const y =  camera.y + camera.h / 2;
+        const x = camera.x + camera.w / 2;
+        const y = camera.y + camera.h / 2;
         const data = defaultDialogData(x, y);
         const node_id = Explorer.tree().create_node(2, {
             text: "New Dialogue",
@@ -176,7 +180,7 @@ class Editor {
                     }
 
                     /////all panel nodes
-                    for(const panel of this.panels.values()) {
+                    for (const panel of this.panels.values()) {
                         panel.createNodes();
                     }
                 });
@@ -217,15 +221,15 @@ class Editor {
         for (const panel of this.panels.values()) {
             panel.sync();
         }
-        
+
         for (const panel of this.panels.values()) {
-            for(const node of panel.ins) {
-                if(node.lineRider) node.lineRider.draw();
+            for (const node of panel.ins) {
+                if (node.lineRider) node.lineRider.draw();
             }
         }
-   
 
-        if(this.dragRider) {
+
+        if (this.dragRider) {
             this.dragRider.to.x = camera.mouseX - 16;
             this.dragRider.to.y = camera.mouseY - 16;
             this.dragRider.draw();

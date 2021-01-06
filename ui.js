@@ -1,8 +1,8 @@
 class UIElement {
     constructor(x, y, w, h) {
         this.parent = null;
-        this.x = -1000;
-        this.y = -1000;
+        this.x = 0;
+        this.y = 0;
         this.w = w;
         this.h = h;
         this.relativeX = x;
@@ -23,7 +23,7 @@ class UIElement {
 
     listenMousePress() {
         for (let i = this.children.length - 1; i >= 0; i--) {
-            if (this.children[i].listenMousePress()) 
+            if (this.children[i].listenMousePress())
                 return true;
         }
 
@@ -82,7 +82,7 @@ class BottomMenu extends UIElement {
         super(0, height - 32, width, 32);
         this.isWorld = false;
 
-        this.slider = createSlider(0.5, 2.5, 1.0, 0.1);
+        this.slider = createSlider(0.5, 2.5, 1.0, 0.01);
         this.slider.style('width', '100px');
         this.slider.input(() => this.sChanged());
 
@@ -165,15 +165,15 @@ class LineRider {
         this.saveData = saveData;
         this.from = from;
         this.to = to;
-        
+
         this.dragPoint = -1;
 
-        if(to.parent){
+        if (to.parent) {
             to.parent.ins = to.parent.ins.filter((el) => {
                 return el != from;
             });
             to.parent.ins.push(from);
-        }  
+        }
     }
 
     draw() {
@@ -190,7 +190,7 @@ class LineRider {
         stroke(110);
         beginShape();
         vertex(this.from.x + 16, this.from.y + 16);
-        for(const p of this.saveData.points) {
+        for (const p of this.saveData.points) {
             vertex(p.x, p.y);
             ellipse(p.x, p.y, 16, 16);
         }
@@ -199,25 +199,25 @@ class LineRider {
     }
 }
 
-class Node extends UIElement{
+class Node extends UIElement {
     constructor(x, y, saveData, receiver) {
         super(x, y, 32, 32);
         this.onColor = color(255);
         this.offColor = color(240);
         this.receiver = receiver;
         this.saveData = saveData;
-        if(!receiver && saveData.id && editor.panels.has(saveData.id)) {
+        if (!receiver && saveData.id && editor.panels.has(saveData.id)) {
             this.lineRider = new LineRider(saveData, this, editor.getPanel(saveData.id).receiver);
 
         }
     }
 
     mousePressed() {
-        if(mouseButton != LEFT) return;
+        if (mouseButton != LEFT) return;
 
-        if(this.receiver) 
+        if (this.receiver)
             editor.nodeStop(this);
-        else 
+        else
             editor.nodeStart(this);
     }
 
@@ -228,12 +228,12 @@ class Node extends UIElement{
         } else {
             fill(this.offColor);
         }
-        
+
         rect(this.x, this.y, this.w, this.h);
-        if(!this.receiver) {
+        if (!this.receiver) {
             line(this.x, this.y + 16, this.x - 10, this.y + 16);
             fill(100);
-        }else {
+        } else {
             line(this.x + 32, this.y + 16, this.x + 42, this.y + 16);
         }
         ellipse(this.x + 16, this.y + 16, 10, 10);
@@ -291,15 +291,15 @@ class Panel extends UIElement {
     createNodes() {}
 
     clearNodes() {
-        for(const in_node of this.ins) {
+        for (const in_node of this.ins) {
             in_node.lineRider.saveData.id = "";
             in_node.lineRider.saveData.type = "";
             in_node.lineRider.saveData.points = [];
             in_node.lineRider = null;
         }
-        
-        for(const out_node of this.outs) {
-            if(out_node.lineRider) {
+
+        for (const out_node of this.outs) {
+            if (out_node.lineRider) {
                 const nextPanel = out_node.lineRider.to.parent;
                 nextPanel.ins = nextPanel.ins.filter((el) => {
                     return el != out_node;
@@ -310,11 +310,11 @@ class Panel extends UIElement {
 
     outView() {
         return (this.relativeX + this.w + 48 < camera.x || this.relativeX - 48 > camera.x + camera.w ||
-                this.relativeY + this.h < camera.y || this.relativeY > camera.y + camera.h);
+            this.relativeY + this.h < camera.y || this.relativeY > camera.y + camera.h);
     }
 
     sync() {
-        if(this.outView())  return;
+        if (this.outView()) return;
         super.sync();
 
         if (!mouseIsPressed || !mouseInScreen()) this.dragging = false;

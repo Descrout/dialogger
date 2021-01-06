@@ -37,7 +37,7 @@ class CharacterEditor {
 
         CharacterEditor.refreshFields();
 
-        if(node) {
+        if (node) {
             $("#name").val(node.text);
             title = "Edit the Character";
         }

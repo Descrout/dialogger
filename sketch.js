@@ -14,7 +14,7 @@ function setup() {
 }
 
 function keyPressed() {
-  if(editor.pause) return;
+  if (editor.pause) return;
   if (keyCode === 32)
     camera.reset();
 }
@@ -22,7 +22,7 @@ function keyPressed() {
 function windowResized() {
   const jsTreeDiv = document.getElementById("jsTreeDiv");
   const canvasDiv = document.getElementById("canvasDiv");
-            
+
   jsTreeDiv.style.width = `${Explorer.resizerPos}px`;
   canvasDiv.style.width = `${windowWidth - Explorer.resizerPos - 2}px`;
 
@@ -36,24 +36,24 @@ function mouseInScreen() {
 }
 
 function mousePressed() {
-  if(editor.pause || !mouseInScreen()) return;
+  if (editor.pause || !mouseInScreen()) return;
   Explorer.tree().deselect_all();
   editor.mousePressed();
 }
 
 function mouseDragged() {
-  if(editor.pause) return;
-  if (mouseButton === CENTER) 
+  if (editor.pause) return;
+  if (mouseButton === CENTER)
     camera.drag();
 }
 
 function mouseWheel(event) {
-  if(editor.pause) return;
+  if (editor.pause) return;
   camera.updateScale(event.delta);
 }
 
 function draw() {
-  if(editor.pause) return;
+  if (editor.pause) return;
   render();
 }
 
