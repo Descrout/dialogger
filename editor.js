@@ -6,6 +6,7 @@ function defaultDialogData(x, y) {
         character: null, //id
         time_limit: 0,
         time_path: {},
+        options: [],
     };
 }
 
@@ -122,7 +123,7 @@ class Editor {
         });
 
         const dialog = new Dialog(Explorer.tree().get_node(node_id));
-        dialog.createNodes();
+        dialog.initLazy();
         this.panels.set(node_id, dialog);
         dialog.focus();
     }
@@ -181,7 +182,8 @@ class Editor {
 
                     /////all panel nodes
                     for (const panel of this.panels.values()) {
-                        panel.createNodes();
+                        panel.initLazy();
+                        panel.sync();
                     }
                 });
             };
@@ -219,7 +221,7 @@ class Editor {
         this.drawBg();
 
         for (const panel of this.panels.values()) {
-            panel.sync();
+            if(!panel.outView())panel.sync();
         }
 
         for (const panel of this.panels.values()) {

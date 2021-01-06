@@ -12,6 +12,15 @@ class UIElement {
         this.isWorld = true;
     }
 
+    remove(){
+        if(this.parent){
+            this.parent.children = this.parent.children.filter((el) => {
+                return el != this;
+            });
+        }
+    }
+    
+
     addChild(child) {
         this.children.push(child);
         child.parent = this;
@@ -131,7 +140,8 @@ class TopMenu extends UIElement {
 class Button extends UIElement {
     constructor(val, x, y, clicked, w, h) {
         super(x, y, w || 100, h || 40);
-
+        this.toffX = this.w / 3;
+        this.toffY = this.h / 2 + 5;
         this.clicked = clicked;
         this.onColor = color(255);
         this.offColor = color(240);
@@ -155,7 +165,7 @@ class Button extends UIElement {
         if (this.val) {
             noStroke();
             fill(0);
-            text(this.val, this.x + this.w / 3, this.y + this.h / 2 + 5);
+            text(this.val, this.x + this.toffX, this.y + this.toffY);
         }
     }
 }
@@ -209,6 +219,16 @@ class Node extends UIElement {
         if (!receiver && saveData.id && editor.panels.has(saveData.id)) {
             this.lineRider = new LineRider(saveData, this, editor.getPanel(saveData.id).receiver);
 
+        }
+    }
+
+    remove() {
+        super.remove();
+        if (this.lineRider) {
+            const nextPanel = this.lineRider.to.parent;
+            nextPanel.ins = nextPanel.ins.filter((el) => {
+                return el != this;
+            });
         }
     }
 
@@ -288,7 +308,7 @@ class Panel extends UIElement {
 
     editButton() {}
     closeButton() {}
-    createNodes() {}
+    initLazy() {}
 
     clearNodes() {
         for (const in_node of this.ins) {
@@ -299,12 +319,7 @@ class Panel extends UIElement {
         }
 
         for (const out_node of this.outs) {
-            if (out_node.lineRider) {
-                const nextPanel = out_node.lineRider.to.parent;
-                nextPanel.ins = nextPanel.ins.filter((el) => {
-                    return el != out_node;
-                });
-            }
+            out_node.remove();
         }
     }
 
@@ -314,7 +329,6 @@ class Panel extends UIElement {
     }
 
     sync() {
-        if (this.outView()) return;
         super.sync();
 
         if (!mouseIsPressed || !mouseInScreen()) this.dragging = false;
@@ -330,5 +344,85 @@ class Panel extends UIElement {
         this.node.data.y = this.relativeY;
 
         this.dragButton.val = this.node.text;
+    }
+}
+
+class UIOption extends UIElement {
+    constructor(parent, preset){
+        super(0, 0, parent.w, 40);
+        this.parent = parent;
+
+        this.data = preset || {
+            text: `${floor(random(100))}`,
+            path: {}
+        };
+
+        this.optNode = new Node(this.w + 10, 4, this.data.path, false);
+        parent.outs.push(this.optNode);
+
+        if(!preset)
+            parent.node.data.options.push(this.data);
+        
+        this.index = parent.options.length;
+        this.relativeY = parent.h + 40 + 40 * this.index;
+        
+        this.addChild(new Button("X", -42, 5, () => {this.remove()}, 32, 32));
+        this.addChild(new Button("↟↟", 0, 0, () => {this.moveUp()}, 42, this.h));
+        this.addChild(new Button(this.data.text, 42, 0, () => {}, this.w - 84, this.h));
+        this.addChild(new Button("↡↡", this.w - 42, 0, () => {this.moveDown()}, 42, this.h));
+        this.addChild(this.optNode);
+    }
+
+    draw(){
+        stroke(100);
+        line(this.x, this.y + 20, this.x - 10, this.y + 20);
+    }
+
+    remove(){
+        super.remove();
+        this.optNode.remove();
+
+        const parent = this.parent;
+
+        const before = parent.options.slice(0, this.index);
+        const after = parent.options.slice(this.index + 1);
+
+        const beforeData = parent.node.data.options.slice(0, this.index);
+        const afterData = parent.node.data.options.slice(this.index + 1);
+        
+        parent.options = before.concat(after);
+        parent.node.data.options = beforeData.concat(afterData);
+        
+        for(let i = 0; i < parent.options.length; i++) {
+            parent.options[i].setNewIndex(i);
+        }
+    }
+
+    setNewIndex(i) {
+        this.index = i;
+        this.relativeY = this.parent.h + 40 + 40 * this.index;
+    }
+
+    swapWith(newIndex) {
+        if(this.parent.options.length < 2) return;
+
+        [this.parent.options[this.index], this.parent.options[newIndex]] = 
+        [this.parent.options[newIndex], this.parent.options[this.index]];
+
+        [this.parent.node.data.options[this.index], this.parent.node.data.options[newIndex]] = 
+        [this.parent.node.data.options[newIndex], this.parent.node.data.options[this.index]];
+        
+        this.parent.options[this.index].setNewIndex(this.index);
+        this.setNewIndex(newIndex);
+    }
+
+    moveUp(){
+        const newIndex = (this.index - 1 < 0) ? this.parent.node.data.options.length -1 : this.index - 1;
+        this.swapWith(newIndex);
+    }
+
+    moveDown(){
+        const newIndex = (this.index + 1 > this.parent.node.data.options.length - 1) ? 0 : this.index + 1;
+        this.swapWith(newIndex);
     }
 }

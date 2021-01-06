@@ -72,9 +72,27 @@ class Dialog extends Panel {
         super(node, 260, 200);
         this.type = "dialog";
         this.characterNode = Explorer.tree().get_node(node.data.character);
+
+        this.options = [];
+
+        this.addOptionButton = new Button("Add Option", 0, this.h, () => {
+            this.addOption();
+        }, this.w, 40);
+        this.addOptionButton.toffX = 145;
+        this.addChild(this.addOptionButton);
     }
 
-    createNodes() {
+    addOption(preset) {
+        const opt = new UIOption(this, preset);
+        this.addChild(opt);
+        this.options.push(opt);
+    }
+
+    initLazy() {
+        for(const opt of this.node.data.options) {
+            this.addOption(opt);
+        }
+
         const saveData = this.node.data.time_path;
         this.timePath = new Node(this.w + 10, 44, saveData, false);
         this.outs.push(this.timePath);
