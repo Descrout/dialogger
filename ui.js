@@ -20,7 +20,6 @@ class UIElement {
         }
     }
     
-
     addChild(child) {
         this.children.push(child);
         child.parent = this;
@@ -143,8 +142,7 @@ class Button extends UIElement {
         this.toffX = this.w / 3;
         this.toffY = this.h / 2 + 5;
         this.clicked = clicked;
-        this.onColor = color(255);
-        this.offColor = color(240);
+        this.color = color(240, 255);
         this.val = val;
     }
 
@@ -155,16 +153,23 @@ class Button extends UIElement {
 
     draw() {
         stroke(200);
-        if (this.isOn()) {
-            fill(this.onColor);
-        } else {
-            fill(this.offColor);
-        }
 
+        fill(255);
         rect(this.x, this.y, this.w, this.h);
+
+        if (this.isOn()) {
+            this.color.setAlpha(100);
+        } else {
+            this.color.setAlpha(255);
+        }
+        
+        fill(this.color);
+        rect(this.x, this.y, this.w, this.h);
+
         if (this.val) {
             noStroke();
             fill(0);
+            textSize(16);
             text(this.val, this.x + this.toffX, this.y + this.toffY);
         }
     }
@@ -366,36 +371,19 @@ class UIOption extends UIElement {
         this.index = parent.options.length;
         this.relativeY = parent.h + 40 + 40 * this.index;
         
-        this.addChild(new Button("X", -42, 5, () => {this.remove()}, 32, 32));
-        this.addChild(new Button("↟↟", 0, 0, () => {this.moveUp()}, 42, this.h));
-        this.addChild(new Button(this.data.text, 42, 0, () => {}, this.w - 84, this.h));
-        this.addChild(new Button("↡↡", this.w - 42, 0, () => {this.moveDown()}, 42, this.h));
-        this.addChild(this.optNode);
-    }
+        this.textButton = new Button(this.data.text, 42, 0, () => {}, this.w - 84, this.h);
+        this.textButton.color = color(random(255), random(255), random(255)); //placeholder
 
-    draw(){
-        stroke(100);
-        line(this.x, this.y + 20, this.x - 10, this.y + 20);
+        this.addChild(new Button("X", 0, 0, () => {this.remove()}, 42, this.h));
+        this.addChild(this.textButton);
+        this.addChild(new Button("⇅", this.w - 42, 0, () => {this.changePos()}, 42, this.h));
+        this.addChild(this.optNode);
     }
 
     remove(){
         super.remove();
         this.optNode.remove();
-
-        const parent = this.parent;
-
-        const before = parent.options.slice(0, this.index);
-        const after = parent.options.slice(this.index + 1);
-
-        const beforeData = parent.node.data.options.slice(0, this.index);
-        const afterData = parent.node.data.options.slice(this.index + 1);
-        
-        parent.options = before.concat(after);
-        parent.node.data.options = beforeData.concat(afterData);
-        
-        for(let i = 0; i < parent.options.length; i++) {
-            parent.options[i].setNewIndex(i);
-        }
+        this.parent.splitOptions(this.index, null);
     }
 
     setNewIndex(i) {
@@ -403,7 +391,11 @@ class UIOption extends UIElement {
         this.relativeY = this.parent.h + 40 + 40 * this.index;
     }
 
-    swapWith(newIndex) {
+    changePos() {
+        this.parent.dragOption = {from: this.index, to: this.index};
+    }
+
+    /*swapWith(newIndex) {
         if(this.parent.options.length < 2) return;
 
         [this.parent.options[this.index], this.parent.options[newIndex]] = 
@@ -414,15 +406,5 @@ class UIOption extends UIElement {
         
         this.parent.options[this.index].setNewIndex(this.index);
         this.setNewIndex(newIndex);
-    }
-
-    moveUp(){
-        const newIndex = (this.index - 1 < 0) ? this.parent.node.data.options.length -1 : this.index - 1;
-        this.swapWith(newIndex);
-    }
-
-    moveDown(){
-        const newIndex = (this.index + 1 > this.parent.node.data.options.length - 1) ? 0 : this.index + 1;
-        this.swapWith(newIndex);
-    }
+    }*/
 }
