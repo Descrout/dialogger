@@ -4,8 +4,8 @@ class CharacterEditor {
 
     static dialog = $("#character-edit").dialog({
         autoOpen: false,
-        height: 450,
-        width: 350,
+        height: 480,
+        width: 450,
         modal: true,
         buttons: {
             "Save": CharacterEditor.finishEditing,
@@ -14,7 +14,9 @@ class CharacterEditor {
             }
         },
         close: function () {
-            $("#addField").off('click');
+            $("#addNumber").off('click');
+            $("#addString").off('click');
+            $("#addBoolean").off('click');
             CharacterEditor.form[0].reset();
             editor.pause = false;
         }
@@ -80,12 +82,23 @@ class CharacterEditor {
     }
 
     static refreshFields() {
-        $("#addField").off('click');
-        $("#addField").click(() => {
-            CharacterEditor.addField();
+        $("#addNumber").off('click');
+        $("#addNumber").click(() => {
+            CharacterEditor.addField("number");
+        });
+
+        $("#addString").off('click');
+        $("#addString").click(() => {
+            CharacterEditor.addField("string");
+        });
+
+        $("#addBoolean").off('click');
+        $("#addBoolean").click(() => {
+            CharacterEditor.addField("boolean");
         });
 
         $("#fieldHolder").empty();
+        $("#fieldHolder").append("<legend>Fields</legend>");
         for (let field of CharacterEditor.fields) {
             const div = document.createElement("div");
             div.style.width = "100%";
@@ -97,7 +110,7 @@ class CharacterEditor {
 
             const nameField = document.createElement("input");
             nameField.setAttribute("type", "text");
-            nameField.style.width = "55%";
+            nameField.style.width = "40%";
             nameField.style.display = "inline-block";
             nameField.style.marginLeft = "5px";
             nameField.value = field.name;
@@ -106,14 +119,28 @@ class CharacterEditor {
             };
 
             const valueField = document.createElement("input");
-            valueField.setAttribute("type", "number");
-            valueField.style.width = "30%";
+            valueField.setAttribute("type", field.type);
+            valueField.style.width = "48%";
             valueField.style.display = "inline-block";
             valueField.style.marginLeft = "5px";
             valueField.value = field.value;
-            valueField.onchange = (e) => {
-                field.value = e.target.value;
-            };
+
+            if(field.type == "checkbox") {
+                valueField.style.width = "44%";
+                valueField.checked = field.value;
+                valueField.onchange = (e) => {
+                    field.value = e.target.checked;
+                    e.target.value = e.target.checked;
+                };
+            }else {
+                if(field.type == "number") {
+                    valueField.step = 0.01;    
+                }
+
+                valueField.onchange = (e) => {
+                    field.value = e.target.value;
+                };
+            }
 
             const removeButton = document.createElement("button");
             removeButton.setAttribute("type", "button");
@@ -133,11 +160,32 @@ class CharacterEditor {
         }
     }
 
-    static addField() {
-        CharacterEditor.fields.push({
-            name: "New Field",
-            value: 0
-        });
+    static addField(type) {
+        switch(type){
+            case "number":
+            CharacterEditor.fields.push({
+                name: "New Number",
+                value: 0,
+                type: "number"
+            });
+            break;
+            case "string":
+            CharacterEditor.fields.push({
+                name: "New String",
+                value: "Hello world.",
+                type: "text"
+            });
+            break;
+            case "boolean":
+            CharacterEditor.fields.push({
+                name: "New Boolean",
+                value: true,
+                type: "checkbox"
+            });
+            break;
+            default:
+        }
+        
         CharacterEditor.refreshFields();
     }
 

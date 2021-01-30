@@ -24,12 +24,16 @@
 
   <div id="character-edit" title="Create a character">
     <form>
-      <fieldset>
+      <fieldset id="outer_fieldset">
         <label for="name">Name</label>
         <input type="text" name="name" id="name" value="New Character" class="text ui-widget-content ui-corner-all">
-        <label for="addField">Add Field</label>
-        <button type="button" name="addField" id="addField">+</button>
-        <div id="fieldHolder" style="width:100%;"></div>
+        <fieldset>
+          <legend>Add Field</legend>
+          <button type="button" name="addNumber" id="addNumber">Number</button>
+          <button type="button" name="addString" id="addString">String</button>
+          <button type="button" name="addBoolean" id="addBoolean">Boolean</button>
+        </fieldset>
+        <fieldset id="fieldHolder" style="width:100%;"></fieldset>
         <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
       </fieldset>
     </form>
