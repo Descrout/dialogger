@@ -24,4 +24,32 @@
         "selected": false,
         "disabled": false
     }
+},
+{
+    "id": 3,
+    "text": "Setters",
+    "a_attr": {
+        "type": "folder",
+        "draggable": false
+    },
+    "state": {
+        "loaded": true,
+        "opened": true,
+        "selected": false,
+        "disabled": false
+    }
+},
+{
+    "id": 4,
+    "text": "Conditions",
+    "a_attr": {
+        "type": "folder",
+        "draggable": false
+    },
+    "state": {
+        "loaded": true,
+        "opened": true,
+        "selected": false,
+        "disabled": false
+    }
 }]

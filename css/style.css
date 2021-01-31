@@ -28,7 +28,7 @@ input.text {
   padding: .4em;
 }
 
-#outer_fieldset {
+.outer_fieldset {
   padding: 0;
   border: 0;
   margin-top: 25px;

@@ -137,9 +137,9 @@ class TopMenu extends UIElement {
 }
 
 class Button extends UIElement {
-    constructor(val, x, y, clicked, w, h) {
+    constructor(val, x, y, clicked, w, h, toffX) {
         super(x, y, w || 100, h || 40);
-        this.toffX = this.w / 3;
+        this.toffX = toffX || (this.w / 3);
         this.toffY = this.h / 2 + 5;
         this.clicked = clicked;
         this.color = color(240, 255);
@@ -184,9 +184,6 @@ class LineRider {
         this.dragPoint = -1;
 
         if (to.parent) {
-            to.parent.ins = to.parent.ins.filter((el) => {
-                return el != from;
-            });
             to.parent.ins.push(from);
         }
     }
@@ -285,7 +282,7 @@ class Panel extends UIElement {
 
         this.addChild(new Button('✎', 0, 0, () => this.editButton(), 50));
         this.addChild(this.dragButton);
-        this.addChild(new Button("X", 310, 0, () => this.closeButton(), 50));
+        this.addChild(new Button("X", this.w - 50, 0, () => this.closeButton(), 50));
         this.addChild(this.receiver);
     }
 
@@ -312,7 +309,9 @@ class Panel extends UIElement {
     }
 
     editButton() {}
-    closeButton() {}
+    closeButton() {
+        editor.removePanel(this);
+    }
     initLazy() {}
 
     clearNodes() {

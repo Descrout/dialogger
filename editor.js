@@ -10,6 +10,21 @@ function defaultDialogData(x, y) {
     };
 }
 
+function defaultSetterData(x, y) {
+    return {
+        x: x,
+        y: y,
+        path: {}
+    };
+}
+
+function defaultConditionData(x, y) {
+    return {
+        x: x,
+        y: y
+    };
+}
+
 
 class Editor {
     constructor() {
@@ -24,7 +39,9 @@ class Editor {
         this.topMenu.addChild(new Button("Save", 10, 10, Editor.save));
         this.topMenu.addChild(new Button("Load", 120, 10, () => this.load()));
 
-        this.topMenu.addChild(new Button("Dialogue", 320, 10, () => this.newPanel("dialog"), 120));
+        this.topMenu.addChild(new Button("Dialogue", 320, 10, () => this.newPanel("dialog"), 116, null, 26));
+        this.topMenu.addChild(new Button("Setter", 448, 10, () => this.newPanel("setter"), 90, null, 22));
+        this.topMenu.addChild(new Button("Condition", 550, 10, () => this.newPanel("condition"), 116, null, 26));
 
         for (const el of this.topMenu.children) {
             el.isWorld = false;
@@ -95,6 +112,13 @@ class Editor {
             node.saveData.type = endNode.parent.type;
             node.saveData.points = points;
 
+            if(this.tempRider.from.lineRider){
+                const before = this.tempRider.from.lineRider.to.parent;
+                before.ins = before.ins.filter((el) => {
+                    return el != node;
+                });
+            }
+
             node.lineRider = new LineRider(node.saveData, node, endNode);
             this.tempRider = null;
         }
@@ -105,7 +129,55 @@ class Editor {
             case "dialog":
                 this.addDialog();
                 break;
+            case "setter":
+                this.addSetter();
+                break;
+            case "condition":
+                this.addCondition();
+                break;
         }
+    }
+
+
+
+    addSetter() {
+        const x = camera.x + camera.w / 2;
+        const y = camera.y + camera.h / 2;
+        const data = defaultSetterData(x, y);
+        const node_id = Explorer.tree().create_node(3, {
+            text: "Setter",
+            icon: 'jstree-file',
+            a_attr: {
+                type: 'file',
+                draggable: false
+            },
+            data: data
+        });
+
+        const setter = new Setter(Explorer.tree().get_node(node_id));
+        setter.initLazy();
+        this.panels.set(node_id, setter);
+        setter.focus();
+    }
+
+    addCondition() {
+        const x = camera.x + camera.w / 2;
+        const y = camera.y + camera.h / 2;
+        const data = defaultConditionData(x, y);
+        const node_id = Explorer.tree().create_node(4, {
+            text: "Condition",
+            icon: 'jstree-file',
+            a_attr: {
+                type: 'file',
+                draggable: false
+            },
+            data: data
+        });
+
+        const condition = new Condition(Explorer.tree().get_node(node_id));
+        condition.initLazy();
+        this.panels.set(node_id, condition);
+        condition.focus();
     }
 
     addDialog() {
@@ -180,6 +252,20 @@ class Editor {
                         this.panels.set(node_id, dia);
                     }
 
+                    ////Setters
+                    for (let node_id of Explorer.tree().get_node(3).children) {
+                        const setter_node = Explorer.tree().get_node(node_id);
+                        const setter = new Setter(setter_node);
+                        this.panels.set(node_id, setter);
+                    }
+
+                    ////Conditions
+                    for (let node_id of Explorer.tree().get_node(4).children) {
+                        const condition_node = Explorer.tree().get_node(node_id);
+                        const condition = new Condition(condition_node);
+                        this.panels.set(node_id, condition);
+                    }
+
                     /////all panel nodes
                     for (const panel of this.panels.values()) {
                         panel.initLazy();
@@ -229,7 +315,6 @@ class Editor {
                 if (node.lineRider) node.lineRider.draw();
             }
         }
-
 
         if (this.dragRider) {
             this.dragRider.to.x = camera.mouseX - 16;

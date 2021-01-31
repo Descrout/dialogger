@@ -107,11 +107,7 @@ class Dialog extends Panel {
     editButton() {
         DialogEditor.openEditing(this.node);
     }
-
-    closeButton() {
-        editor.removePanel(this);
-    }
-
+    
     optionOrderChangeable() {
         const from = this.dragOption.from;
         const to = this.dragOption.to;
