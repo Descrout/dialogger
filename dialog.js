@@ -31,6 +31,8 @@ class DialogEditor {
 
         const charSelect = document.getElementById("select_character");
         $("#select_character").empty();
+        charSelect.add(new Option("undefined", "undefined"));
+
         for (const char_id of Explorer.tree().get_node(1).children) {
             const character = Explorer.tree().get_node(char_id);
             const option = new Option(character.text, char_id);
@@ -51,18 +53,24 @@ class DialogEditor {
         const node = DialogEditor.tempNode;
 
         const charSelect = document.getElementById("select_character");
-        const selOp = charSelect.options[charSelect.selectedIndex];
-
+        
         Explorer.tree().rename_node(node.id, $("#dialog_name").val());
-        node.data.time_limit = $("#time_limit").val();
         node.data.text = $("#dialog_text").val();
+        node.data.time_limit = $("#time_limit").val();
 
-        if (selOp) {
+        const selOp = charSelect.options[charSelect.selectedIndex];
+        if (selOp.value != "undefined") {
             node.data.character = selOp.value;
             editor.getPanel(node.id).characterNode = Explorer.tree().get_node(selOp.value);
+        }else{
+            node.data.character = null;
+            editor.getPanel(node.id).characterNode = {text: "undefined"};
         }
 
         DialogEditor.tempNode = null;
+
+        editor.getPanel(node.id).checkRefs();
+
         DialogEditor.dialog.dialog("close");
     }
 }
@@ -80,6 +88,28 @@ class Dialog extends Panel {
         }, this.w, 40);
         this.addOptionButton.toffX = 145;
         this.addChild(this.addOptionButton);
+    }
+
+    checkRefs() {
+        CharacterEditor.refMap.clearPanel(this.node.id);
+        const vars = CharacterEditor.parseForValues(this.node.data.text);
+
+        for(const variable of vars) {
+            CharacterEditor.refMap.checkRef(variable, this.node.id);
+        }
+    }
+
+    renameRef(oldName, newName) {
+        oldName = "${" + oldName + "}";
+        newName = "${" + newName + "}";
+
+        this.node.data.text = this.node.data.text.replaceAll(oldName, newName);
+    }
+
+    invalidateRef(refID) {
+    }
+
+    validateRef(refID) {
     }
 
     outView() {
@@ -163,7 +193,6 @@ class Dialog extends Panel {
     draw() {
         super.draw();
         
-
         line(this.x, this.y + 80, this.x + this.w, this.y + 80);
         line(this.x + this.w / 2, this.y + 40, this.x + this.w / 2, this.y + 80);
 

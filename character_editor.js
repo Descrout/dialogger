@@ -1,6 +1,10 @@
+//blacklist : ".", "undefined", "name"
+
 class CharacterEditor {
     static fields = null;
     static editedNode = null;
+    static refMap = null;
+    static nameBefore = null;
 
     static dialog = $("#character-edit").dialog({
         autoOpen: false,
@@ -32,17 +36,18 @@ class CharacterEditor {
         CharacterEditor.editedNode = node;
 
         if (node && node.data.fields) {
+            CharacterEditor.nameBefore = node.text;
             CharacterEditor.fields = JSON.parse(JSON.stringify(node.data.fields));
         } else {
             CharacterEditor.fields = [];
         }
 
-        CharacterEditor.refreshFields();
-
         if (node) {
             $("#name").val(node.text);
             title = "Edit the Character";
         }
+
+        CharacterEditor.refreshFields();
 
         CharacterEditor.dialog.dialog("option", "title", title);
         CharacterEditor.dialog.dialog("open");
@@ -57,11 +62,22 @@ class CharacterEditor {
         if (!CharacterEditor.checkCharName(tree, name, node)) return;
         if (!CharacterEditor.checkFields()) return;
 
+
         if (node) {
+            if(name != CharacterEditor.nameBefore) {
+                CharacterEditor.refMap.renameCharacter(CharacterEditor.nameBefore, name);
+            }
+
+            CharacterEditor.refMap.refresh(name, CharacterEditor.fields);
+
             node.data.fields = JSON.parse(JSON.stringify(CharacterEditor.fields));
             tree.rename_node(node, name);
+
             CharacterEditor.editedNode = null;
+            CharacterEditor.nameBefore = null;
         } else {
+            CharacterEditor.refMap.addRefs(name, CharacterEditor.fields);
+
             node = tree.create_node(1, {
                 text: name,
                 icon: 'jstree-file',
@@ -82,6 +98,8 @@ class CharacterEditor {
     }
 
     static refreshFields() {
+        const char_name = $("#name").val();
+
         $("#addNumber").off('click');
         $("#addNumber").click(() => {
             CharacterEditor.addField("number");
@@ -99,7 +117,7 @@ class CharacterEditor {
 
         $("#fieldHolder").empty();
         $("#fieldHolder").append("<legend>Fields</legend>");
-        for (let field of CharacterEditor.fields) {
+        for (const field of CharacterEditor.fields) {
             const div = document.createElement("div");
             div.style.width = "100%";
             div.style.border = "1px solid";
@@ -114,6 +132,11 @@ class CharacterEditor {
             nameField.style.display = "inline-block";
             nameField.style.marginLeft = "5px";
             nameField.value = field.name;
+            
+            if(CharacterEditor.refMap.fields.has(`${char_name}.${field.name}`))
+                field.before = field.name;
+            else delete field.before;
+            
             nameField.onchange = (e) => {
                 field.name = e.target.value;
             };
@@ -195,7 +218,12 @@ class CharacterEditor {
             return false;
         }
 
-        for (let node_id of tree.get_node(1).children) {
+        if (name === "undefined" || name === "name" || name.includes('.')) {
+            alert("Pick a different name!");
+            return false;
+        }
+
+        for (const node_id of tree.get_node(1).children) {
             const character = tree.get_node(node_id);
 
             if (character.text == name && character != node) {
@@ -208,8 +236,20 @@ class CharacterEditor {
     }
 
     static checkFields() {
-        for (let field1 of CharacterEditor.fields) {
-            for (let field2 of CharacterEditor.fields) {
+        for (const field of CharacterEditor.fields) {
+            if (field.name.length < 3) {
+                alert("Pick a longer field name!");
+                return false;
+            }
+
+            if (field.name === "undefined" || field.name === "name" || field.name.includes('.')) {
+                alert("Pick a different field name!");
+                return false;
+            }
+        }
+
+        for (const field1 of CharacterEditor.fields) {
+            for (const field2 of CharacterEditor.fields) {
                 if (field1 != field2 && field1.name === field2.name) {
                     alert("Character fields should be unique!");
                     return false;
@@ -217,5 +257,25 @@ class CharacterEditor {
             }
         }
         return true;
+    }
+
+    static parseForValues(text) {
+        const vars = [];
+                
+        let first = text.indexOf("${");
+        let last = text.indexOf("}");
+
+        while(first != -1 && last != -1) {
+            first += 2;
+            const word = text.substr(first, last - first);
+            
+            if(word)
+                vars.push(word);
+
+            text = text.substr(last + 1);
+            first = text.indexOf("${");
+            last = text.indexOf("}");
+        }
+        return vars;
     }
 }

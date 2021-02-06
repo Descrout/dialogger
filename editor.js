@@ -14,6 +14,7 @@ function defaultSetterData(x, y) {
     return {
         x: x,
         y: y,
+        variable: null,// ref id
         path: {}
     };
 }
@@ -205,12 +206,14 @@ class Editor {
     }
 
     removePanelViaNode(panel_node) {
+        CharacterEditor.refMap.clearPanel(panel_node.id);
         Explorer.tree().delete_node(panel_node);
         this.getPanel(panel_node.id).clearNodes();
         this.panels.delete(panel_node.id);
     }
 
     removePanel(panel) {
+        CharacterEditor.refMap.clearPanel(panel.node.id);
         Explorer.tree().delete_node(panel.node);
         this.getPanel(panel.node.id).clearNodes();
         this.panels.delete(panel.node.id);
@@ -245,6 +248,8 @@ class Editor {
                 Explorer.tree().refresh();
 
                 $("#jsTreeDiv").on('refresh.jstree', () => {
+                    CharacterEditor.refMap = new RefMap();
+
                     ////Dialogs
                     for (let node_id of Explorer.tree().get_node(2).children) {
                         const dia_node = Explorer.tree().get_node(node_id);
@@ -269,6 +274,7 @@ class Editor {
                     /////all panel nodes
                     for (const panel of this.panels.values()) {
                         panel.initLazy();
+                        panel.checkRefs();
                         panel.sync();
                     }
                 });

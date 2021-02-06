@@ -269,7 +269,7 @@ class Panel extends UIElement {
         this.type = "panel";
         this.node = node;
         this.dragging = false;
-
+        
         this.ins = [];
         this.outs = [];
 
@@ -285,6 +285,14 @@ class Panel extends UIElement {
         this.addChild(new Button("X", this.w - 50, 0, () => this.closeButton(), 50));
         this.addChild(this.receiver);
     }
+
+    renameRef(oldName, newName) {}
+
+    invalidateRef(refID) {}
+
+    validateRef(refID) {}
+
+    checkRefs() {}
 
     mousePressed() {
         this.bringFront();

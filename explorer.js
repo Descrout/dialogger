@@ -40,6 +40,7 @@ class Explorer {
             else if (node.a_attr.type == "file")
                 editor.getPanel(node.id).focus();
         });
+
     }
 
     static tree() {
@@ -74,9 +75,12 @@ class Explorer {
                 "action": function (obj) {
                     if (node.parent == "1") {
                         const oldName = node.text;
-                        tree.edit(node, null, (n, succ, canc) => {
-                            if (succ && !canc && !CharacterEditor.checkCharName(tree, n.text, n)) {
-                                tree.rename_node(n, oldName);
+                        tree.edit(node, null, (n, success, cancel) => {
+                            if (success && !cancel) {
+                                if(CharacterEditor.checkCharName(tree, n.text, n)) 
+                                    CharacterEditor.refMap.renameCharacter(oldName, n.text);  
+                                 else 
+                                    tree.rename_node(n, oldName);
                             }
                         });
                     } else tree.edit(node);
@@ -87,10 +91,10 @@ class Explorer {
                 "separator_after": false,
                 "label": "Remove",
                 "action": function (obj) {
-                    if (node.parent == "1")
+                    if (node.parent == "1"){
+                        CharacterEditor.refMap.removeCharacter(node.text);
                         tree.delete_node(node);
-                    else
-                        editor.removePanelViaNode(node);
+                    }else editor.removePanelViaNode(node);
                 }
             }
         };

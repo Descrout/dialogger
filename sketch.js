@@ -3,7 +3,8 @@ let editor;
 
 function setup() {
   Explorer.init();
-
+  CharacterEditor.refMap = new RefMap();
+  
   const canvasDiv = document.getElementById("canvasDiv");
 
   const canvas = createCanvas(canvasDiv.clientWidth, canvasDiv.clientHeight);
