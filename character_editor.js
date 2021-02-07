@@ -278,4 +278,27 @@ class CharacterEditor {
         }
         return vars;
     }
+
+    static fillWithVars(select) {
+        if(!select) return;
+
+        const tree = Explorer.tree();
+        
+        select.add(new Option("undefined", "undefined"));
+
+        for (const node_id of tree.get_node(1).children) {
+            const character = tree.get_node(node_id);
+            const optgroup = document.createElement("optgroup");
+            optgroup.setAttribute("label", character.text);
+            
+            optgroup.appendChild(new Option("name", `${character.text}.name`));
+
+            for (const field of character.data.fields) {
+                const option = new Option(field.name, `${character.text}.${field.name}`);
+                optgroup.appendChild(option);
+            }
+
+            select.appendChild(optgroup);
+        }
+    }
 }

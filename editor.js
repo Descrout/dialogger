@@ -15,6 +15,7 @@ function defaultSetterData(x, y) {
         x: x,
         y: y,
         variable: null,// ref id
+        operation: null,
         path: {}
     };
 }
