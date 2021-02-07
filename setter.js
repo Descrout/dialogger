@@ -104,11 +104,12 @@ class Setter extends Panel {
     }
 
     setOperation(field) {
-        this.refs.clear();
-        const operation = Operation.getData(field, this.refs);
+        const refs = new Map();
+        const operation = Operation.getData(field, refs);
         if(operation != null) {
             this.node.data.operation = operation;
-            this.text = Setter.getText(operation);  
+            this.refs = refs; 
+            this.text = Setter.getText(operation); 
             return true;
         }
         return false;
@@ -126,14 +127,15 @@ class Setter extends Panel {
 
     renameRef(oldName, newName) {
         if(oldName === this.node.data.variable) this.node.data.variable = newName;
-        
-        const temp = this.refs.get(oldName);
-        temp.var = newName;
+        else { 
+            const temp = this.refs.get(oldName);
+            temp.var = newName;
 
-        this.refs.delete(oldName);
-        this.refs.set(newName, temp);
+            this.refs.delete(oldName);
+            this.refs.set(newName, temp);
 
-        this.text = this.text.replace("${"+oldName+"}", "${"+newName+"}");
+            this.text = this.text.replace("${"+oldName+"}", "${"+newName+"}");
+        }
     }
 
     invalidateRef(refID) {
