@@ -164,7 +164,7 @@ class Operation {
 		fs.appendChild(child);
 	}
 
-	static getData(fs) {
+	static getData(fs, refs) {
 		const type = fs.getAttribute("data-type");
 		const op = fs.firstChild.innerHTML;
 
@@ -172,8 +172,16 @@ class Operation {
 			const val = fs.getAttribute("data-value");
 			let data = {};
 
-			if(type === "select") data["var"] = val;
-			else if(type === "number") data = Number.parseFloat(val); 
+			if(type === "select") {
+				if(val) {
+					data["var"] = val;
+					refs.set(val, data);
+				}else {
+					alert("Please pick the reference.");
+					return null;
+				}
+				
+			} else if(type === "number") data = Number.parseFloat(val); 
 			else if(type === "checkbox") data = (val === "true");
 			else data = val;
 
@@ -181,8 +189,11 @@ class Operation {
 		}
 
 		if(op === "Operation") {
-			if(fs.lastChild.nodeName != "FIELDSET") return null;
-			return Operation.getData(fs.lastChild);
+			if(fs.lastChild.nodeName != "FIELDSET") {
+				alert("Pleace pick an operation.");
+				return null;
+			}
+			return Operation.getData(fs.lastChild, refs);
 		}
 
 		const data = {};
@@ -193,7 +204,9 @@ class Operation {
 		for(const _fs of fs.children) {
 			if(_fs.nodeName === "FIELDSET") {
 				fsCount++;
-				data[op].push(Operation.getData(_fs));
+				const nextData = Operation.getData(_fs, refs);
+				if(nextData != null) data[op].push(nextData);
+				else return null;
 			}
 		}
 
@@ -203,45 +216,5 @@ class Operation {
 		}
 
 		return data;
-	}
-
-	static getText(fs) {
-		let txt = "";
-		const type = fs.getAttribute("data-type");
-		const op = fs.firstChild.innerHTML;
-
-		if(type) {
-			const data = fs.getAttribute("data-value");
-
-			if(type === "select") txt += "${" + data + "}";
-			else if(type === "text") txt += `"${data}"`;
-			else txt += data;
-
-			return txt; // we out
-		}
-
-		if(op === "Operation"){
-			if(fs.lastChild.nodeName != "FIELDSET") return null;
-			return Operation.getText(fs.lastChild);
-		}
-
-		let fsCount = 0;
-
-		for(const _fs of fs.children) {
-			if(_fs.nodeName === "FIELDSET") {
-				fsCount++;
-				txt += Operation.getText(_fs);
-				txt += ` ${op} `;
-			}
-		}
-
-		if(fsCount < 2) {
-			alert("Error: Operations should atleast contain 2 child.")
-			return null;
-		}
-
-		txt = txt.substr(0, txt.length - (op.length + 2));
-		
-		return `(${txt})`;
 	}
 }

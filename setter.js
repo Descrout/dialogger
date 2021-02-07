@@ -3,8 +3,8 @@ class SetterEditor {
 
 	static dialog = $("#setter-edit").dialog({
         autoOpen: false,
-        width: window.innerWidth / 1.5,
-        height: window.innerHeight / 1.2,
+        width: window.innerWidth / 1.3,
+        height: window.innerHeight / 1.1,
         modal: true,
         buttons: {
             "Save": SetterEditor.finishEditing,
@@ -55,19 +55,16 @@ class SetterEditor {
 
     static finishEditing() {
     	const node = SetterEditor.tempNode;
-
-    	const name = $("#setter_name").val();
-        Explorer.tree().rename_node(node.id, name);
-        node.data.text = name;
-
+        const name = $("#setter_name").val();
         const panel = editor.getPanel(node.id);
 
-        panel.setOperation(document.getElementById("operation_fs"));
-        $("#operation_fs").empty();
-
-        panel.checkRefs();
-
-    	SetterEditor.dialog.dialog("close");
+        if(panel.setOperation(document.getElementById("operation_fs"))) {
+            Explorer.tree().rename_node(node.id, name);
+            node.data.text = name;
+            $("#operation_fs").empty();
+            panel.checkRefs();
+            SetterEditor.dialog.dialog("close");
+        }
     }
 }
 
@@ -76,15 +73,14 @@ class Setter extends Panel {
 		super(node, 180, 80);
         this.type = "setter";
         this.text = "undefined";
+        this.refs = new Map();
 	}
 
     static getText(data, op) {
         const type = typeof data;
 
         if(type === "object") {
-            if(data["var"]) {
-                return "${" + data["var"] + "}";
-            }
+            if(data["var"]) return "${" + data["var"] + "}";
 
             if(Array.isArray(data)) {
                 let txt = "(";
@@ -100,30 +96,44 @@ class Setter extends Panel {
                 txt += Setter.getText(data[key], key);
             }
             return txt;
-        }else if(type === "number") {
-            return data;
         }else if(type === "string") {
             return `"${data}"`;
-        }else if(type === "boolean") {
+        }else { // number and boolean
             return data;
         }
     }
 
     setOperation(field) {
-        this.node.data.operation = Operation.getData(field);
-        this.text = Setter.getText(this.node.data.operation) || "undefined";
+        this.refs.clear();
+        const operation = Operation.getData(field, this.refs);
+        if(operation != null) {
+            this.node.data.operation = operation;
+            this.text = Setter.getText(operation);  
+            return true;
+        }
+        return false;
     }
 
     checkRefs() {
     	CharacterEditor.refMap.clearPanel(this.node.id);
 
         CharacterEditor.refMap.checkRef(this.node.data.variable, this.node.id);
-        // TODO : check operation refs
+        
+        for(const ref of this.refs.values()) {
+            CharacterEditor.refMap.checkRef(ref.var, this.node.id);
+        }
     }
 
     renameRef(oldName, newName) {
         if(oldName === this.node.data.variable) this.node.data.variable = newName;
-        // TODO : rename operation refs
+        
+        const temp = this.refs.get(oldName);
+        temp.var = newName;
+
+        this.refs.delete(oldName);
+        this.refs.set(newName, temp);
+
+        this.text = this.text.replace("${"+oldName+"}", "${"+newName+"}");
     }
 
     invalidateRef(refID) {
