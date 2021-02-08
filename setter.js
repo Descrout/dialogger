@@ -42,7 +42,8 @@ class SetterEditor {
         const operation_fs = document.getElementById("operation_fs");
         Operation.reset(operation_fs);
 
-        if(node.data.operation) Operation.construct(operation_fs, node.data.operation);
+        if(node.data.operation !== null && 
+           node.data.operation !== undefined) Operation.construct(operation_fs, node.data.operation);
         else Operation.addSelect(operation_fs);
     }
 
@@ -72,44 +73,16 @@ class Setter extends Panel {
 	constructor(node) {
 		super(node, 180, 80);
         this.type = "setter";
-        this.text = "undefined";
-        this.refs = new Map();
+        this.text = Operation.getText(node.data.operation); 
+        this.refs = Operation.getRefs(node.data.operation);
 	}
 
-    static getText(data, op) {
-        const type = typeof data;
-
-        if(type === "object") {
-            if(data["var"]) return "${" + data["var"] + "}";
-
-            if(Array.isArray(data)) {
-                let txt = "(";
-                for(const d of data) {
-                    txt += Setter.getText(d, op) + ` ${op} `;
-                }
-                txt = txt.substr(0, txt.length - (op.length + 2));
-                return txt + ")";
-            }
-
-            let txt = "";
-            for(const key of Object.keys(data)) {
-                txt += Setter.getText(data[key], key);
-            }
-            return txt;
-        }else if(type === "string") {
-            return `"${data}"`;
-        }else { // number and boolean
-            return data;
-        }
-    }
-
     setOperation(field) {
-        const refs = new Map();
-        const operation = Operation.getData(field, refs);
+        const operation = Operation.getData(field);
         if(operation != null) {
             this.node.data.operation = operation;
-            this.refs = refs; 
-            this.text = Setter.getText(operation); 
+            this.refs = Operation.getRefs(operation); 
+            this.text = Operation.getText(operation); 
             return true;
         }
         return false;

@@ -6,7 +6,8 @@ class RefMap {
 		const tree = Explorer.tree();
 		if(tree.get_node(1).children) {
 			for (const node_id of tree.get_node(1).children) {
-	            const character = tree.get_node(node_id);            
+	            const character = tree.get_node(node_id);
+	            this.fields.set(`${character.text}.name`, new Set());            
 	            for(const field of character.data.fields) {
 					const id = `${character.text}.${field.name}`;
 					this.fields.set(id, new Set());

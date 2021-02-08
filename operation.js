@@ -40,7 +40,8 @@ class Operation {
 
 			for(const key of Object.keys(data)) {
 				const _fs = Operation.createFieldset(key);
-				Operation.addOperationAdder(_fs);
+				//Operation.addOperationAdder(_fs);
+				Operation.addSelect(_fs);
 				fs.appendChild(_fs);
 				Operation.construct(_fs, data[key]);
 				return;
@@ -62,15 +63,18 @@ class Operation {
 
 	static addSelect(fs) {
 		const select = document.createElement("select");
-		select.add(new Option("Select Operator", "nochange", true));
+		const isFirst = fs.firstChild.innerHTML === "Operation";
+		select.add(new Option("Insert", "nochange", true));
 
 		for(const op of Operation.ops) {
 			select.add(new Option(op, op));
 		}
 
 		select.onchange = (e) => {
-			select.remove();
 			Operation.setInside(fs, e.target.value);
+			
+			if(isFirst) e.target.remove();
+			else e.target.selectedIndex = 0;
 		};
 
 		fs.appendChild(select);
@@ -90,16 +94,19 @@ class Operation {
 
 	static createFieldset(txt) {
 		const fs = document.createElement("fieldset");
-	
+		const color = Math.random() * 360;
+		fs.style.border = `2px solid hsla(${color}, 90%, 40%, 1)`;
+		fs.style.backgroundColor = `hsla(${color}, 60%, 80%, 0.15)`;
+
 		const legend = document.createElement("legend");
 		legend.innerHTML = txt;
 		fs.appendChild(legend);
 
 		const closeButton = document.createElement("button");
 		closeButton.innerHTML = "X";
-		closeButton.style = "position:relative;left:-24px;";
+		closeButton.style = "display: inline;position:relative;left:-24px;";
 		closeButton.onclick = (e) => {
-			if(fs.parentElement.children.length <= 3 && fs.parentElement.nodeName == "FIELDSET"){
+			if(fs.parentElement.firstChild.innerHTML === "Operation"){
 				Operation.addSelect(fs.parentElement);
 			}
 			fs.remove();
@@ -112,6 +119,7 @@ class Operation {
 	static addInput(fs, type, val) {
 		const input = document.createElement("input");
 		input.type = type;
+		input.style = "display: inline;";
 		fs.setAttribute("data-type", type);
 		fs.setAttribute("data-value", val);
 
@@ -158,13 +166,14 @@ class Operation {
 				Operation.addInput(child, "checkbox", false);
 			break;
 			default:
-				Operation.addOperationAdder(child);
+				//Operation.addOperationAdder(child);
+				Operation.addSelect(child);
 		}
 
 		fs.appendChild(child);
 	}
 
-	static getData(fs, refs) {
+	static getData(fs) {
 		const type = fs.getAttribute("data-type");
 		const op = fs.firstChild.innerHTML;
 
@@ -175,7 +184,6 @@ class Operation {
 			if(type === "select") {
 				if(val) {
 					data["var"] = val;
-					refs.set(val, data);
 				}else {
 					alert("Please pick the reference.");
 					return null;
@@ -193,7 +201,7 @@ class Operation {
 				alert("Pleace pick an operation.");
 				return null;
 			}
-			return Operation.getData(fs.lastChild, refs);
+			return Operation.getData(fs.lastChild);
 		}
 
 		const data = {};
@@ -204,7 +212,7 @@ class Operation {
 		for(const _fs of fs.children) {
 			if(_fs.nodeName === "FIELDSET") {
 				fsCount++;
-				const nextData = Operation.getData(_fs, refs);
+				const nextData = Operation.getData(_fs);
 				if(nextData != null) data[op].push(nextData);
 				else return null;
 			}
@@ -217,4 +225,53 @@ class Operation {
 
 		return data;
 	}
+
+	static getRefs(data, _refs) {
+        const refs = _refs || new Map();
+
+        if(typeof data === "object") {
+        	if(data === null) return refs;
+            if(data["var"]) {
+            	refs.set(data["var"], data);
+            }
+
+            if(Array.isArray(data)) {
+                for(const d of data) {
+                    Operation.getRefs(d, refs);
+                }
+            }
+
+            for(const val of Object.values(data)) {
+                Operation.getRefs(val, refs);
+            }
+        }
+
+        return refs;
+    }
+
+    static getText(data, op) {
+    	const type = typeof data;
+
+        if(type === "object") {
+        	if(data === null) return "undefined";
+            if(data["var"]) return "${" + data["var"] + "}";
+
+            if(Array.isArray(data)) {
+                let txt = "(";
+                for(const d of data) {
+                    txt += Operation.getText(d, op) + ` ${op} `;
+                }
+                txt = txt.substr(0, txt.length - (op.length + 2));
+                return txt + ")";
+            }
+
+            let txt = "";
+            for(const key of Object.keys(data)) {
+                txt += Operation.getText(data[key], key);
+            }
+            return txt;
+
+        }else if(type === "string") return `"${data}"`;
+        else return data; // number and boolean
+    }
 }
