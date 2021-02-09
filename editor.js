@@ -78,7 +78,7 @@ class Editor {
                             if (dx * dx < 64 && dy * dy < 64) {
                                 if (mouseButton == LEFT)
                                     node.lineRider.dragPoint = i;
-                                else
+                                else if(node.lineRider.dragPoint === -1)
                                     points.splice(i, 1);
                                 return;
                             }
@@ -139,8 +139,6 @@ class Editor {
                 break;
         }
     }
-
-
 
     addSetter() {
         const x = camera.x + camera.w / 2;

@@ -71,7 +71,7 @@ class SetterEditor {
 
 class Setter extends Panel {
 	constructor(node) {
-		super(node, 180, 80);
+		super(node, 230, 80);
         this.type = "setter";
         this.text = Operation.getText(node.data.operation); 
         this.refs = Operation.getRefs(node.data.operation);
@@ -135,6 +135,7 @@ class Setter extends Panel {
         fill(0);
 
         const result = `${this.node.data.variable || "undefined"} = ${this.text}`;
-        text(result, this.x + 5, this.y + 55, this.w - 10, 40);
+        this.h = floor(textWidth(result) / this.w) * 12 + 80;
+        text(result, this.x + 5, this.y + 55, this.w - 10, this.h - 40);
 	}
 }
