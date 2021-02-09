@@ -220,7 +220,6 @@ class Node extends UIElement {
         this.saveData = saveData;
         if (!receiver && saveData.id && editor.panels.has(saveData.id)) {
             this.lineRider = new LineRider(saveData, this, editor.getPanel(saveData.id).receiver);
-
         }
     }
 
@@ -359,26 +358,125 @@ class Panel extends UIElement {
     }
 }
 
+class OptionPanel extends Panel {
+    constructor(node, w, h) {
+        super(node, w, h);
+        this.dragOption = null;
+        this.options = [];
+        this.bottom = this.h + 40;
+    }
+
+    optionClicked(option) {}
+
+    addOption(preset) {
+        const opt = new UIOption(this, preset);
+        this.addChild(opt);
+        this.options.push(opt);
+        this.calcBottom();
+        return opt;
+    }
+
+    calcBottom() {
+        this.bottom = this.h + 40 + this.options.length * 40;
+    }
+
+    initLazy() {
+        for(const opt of this.node.data.options) {
+            this.addOption(opt);
+        }
+    }
+
+    optionOrderChangeable() {
+        const from = this.dragOption.from;
+        const to = this.dragOption.to;
+
+        return (from != to && to != from + 1);
+    }
+
+    changeOptionOrder() {
+        if(this.optionOrderChangeable()) {
+            const put = {};
+            put.opt = this.options.splice(this.dragOption.from, 1);
+            put.data = this.node.data.options.splice(this.dragOption.from, 1);
+
+            if(this.dragOption.from > this.dragOption.to) this.splitOptions(this.dragOption.to, put);
+            else this.splitOptions(this.dragOption.to - 1, put);
+        }
+        this.dragOption = null;
+    }
+
+    splitOptions(index, put) {
+        const jump = put ? 0 : 1;
+
+        const before = this.options.slice(0, index);
+        const after = this.options.slice(index + jump);
+
+        const beforeData = this.node.data.options.slice(0, index);
+        const afterData = this.node.data.options.slice(index + jump);
+        
+        if(put) {
+            this.options = before.concat(put.opt, after);
+            this.node.data.options = beforeData.concat(put.data, afterData);
+        }else {
+            this.options = before.concat(after);
+            this.node.data.options = beforeData.concat(afterData);
+        }
+        
+        for(let i = 0; i < this.options.length; i++) {
+            this.options[i].setNewIndex(i);
+        }
+    }
+
+    sync() {
+        super.sync();
+        
+        if(this.dragOption) {
+            if(!mouseIsPressed) {
+                this.changeOptionOrder();
+            }else {
+                const bottom = this.y + this.h + 40;
+                this.dragOption.to = min(this.options.length, floor(max(0, camera.mouseY - bottom) / 40));
+                this.drawLine();
+            }
+        }
+    }
+
+    drawLine() {
+        if(this.optionOrderChangeable()){
+            const y_pos = this.y + this.h + 40 + (40 * this.dragOption.to);
+            stroke(0);
+            strokeWeight(3);
+            line(this.x, y_pos, this.x + this.w, y_pos);
+            strokeWeight(1);
+        }
+    }
+}
+
 class UIOption extends UIElement {
     constructor(parent, preset){
         super(0, 0, parent.w, 40);
         this.parent = parent;
 
         this.data = preset || {
-            text: `${floor(random(100))}`,
-            path: {}
+            text: "Empty",
+            path: {},
+            operation: null
         };
 
         this.optNode = new Node(this.w + 10, 4, this.data.path, false);
         parent.outs.push(this.optNode);
 
-        if(!preset)
+        if(!preset) {
+            this.refs = new Map();
             parent.node.data.options.push(this.data);
+        } else {
+            this.refs = Operation.getRefs(this.data.operation);
+        }
         
         this.index = parent.options.length;
         this.relativeY = parent.h + 40 + 40 * this.index;
         
-        this.textButton = new Button(this.data.text, 42, 0, () => {}, this.w - 84, this.h);
+        this.textButton = new Button(this.data.text, 42, 0, () => {this.parent.optionClicked(this)}, this.w - 84, this.h);
         this.textButton.color = color(random(255), random(255), random(255)); //placeholder
 
         this.addChild(new Button("X", 0, 0, () => {this.remove()}, 42, this.h));
@@ -391,6 +489,7 @@ class UIOption extends UIElement {
         super.remove();
         this.optNode.remove();
         this.parent.splitOptions(this.index, null);
+        this.parent.calcBottom();
     }
 
     setNewIndex(i) {
@@ -401,17 +500,4 @@ class UIOption extends UIElement {
     changePos() {
         this.parent.dragOption = {from: this.index, to: this.index};
     }
-
-    /*swapWith(newIndex) {
-        if(this.parent.options.length < 2) return;
-
-        [this.parent.options[this.index], this.parent.options[newIndex]] = 
-        [this.parent.options[newIndex], this.parent.options[this.index]];
-
-        [this.parent.node.data.options[this.index], this.parent.node.data.options[newIndex]] = 
-        [this.parent.node.data.options[newIndex], this.parent.node.data.options[this.index]];
-        
-        this.parent.options[this.index].setNewIndex(this.index);
-        this.setNewIndex(newIndex);
-    }*/
 }

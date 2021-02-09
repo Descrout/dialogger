@@ -58,6 +58,10 @@ class Explorer {
                         CharacterEditor.openEditing();
                     } else if (node.id == "2") {
                         editor.newPanel("dialog");
+                    } else if (node.id == "3") {
+                        editor.newPanel("setter");
+                    } else if (node.id == "4") {
+                        editor.newPanel("condition");
                     }
                 }
             }

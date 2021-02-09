@@ -40,7 +40,7 @@ class SetterEditor {
         };
 
         const operation_fs = document.getElementById("operation_fs");
-        Operation.reset(operation_fs);
+        Operation.reset(operation_fs, "Value");
 
         if(node.data.operation !== null && 
            node.data.operation !== undefined) Operation.construct(operation_fs, node.data.operation);
@@ -73,8 +73,6 @@ class Setter extends Panel {
 	constructor(node) {
 		super(node, 230, 80);
         this.type = "setter";
-        this.text = Operation.getText(node.data.operation); 
-        this.refs = Operation.getRefs(node.data.operation);
 	}
 
     setOperation(field) {
@@ -100,8 +98,8 @@ class Setter extends Panel {
 
     renameRef(oldName, newName) {
         if(oldName === this.node.data.variable) this.node.data.variable = newName;
-        else { 
-            const temp = this.refs.get(oldName);
+        const temp = this.refs.get(oldName);
+        if(temp) {
             temp.var = newName;
 
             this.refs.delete(oldName);
@@ -122,6 +120,9 @@ class Setter extends Panel {
 	}
 
 	initLazy() {
+        this.text = Operation.getText(this.node.data.operation); 
+        this.refs = Operation.getRefs(this.node.data.operation);
+
 		const saveData = this.node.data.path;
 		this.path = new Node(this.w + 10, 44, saveData, false);
         this.outs.push(this.path);
@@ -134,7 +135,7 @@ class Setter extends Panel {
         noStroke();
         fill(0);
 
-        const result = `${this.node.data.variable || "undefined"} = ${this.text}`;
+        const result = `${this.node.data.variable} = ${this.text}`;
         this.h = floor(textWidth(result) / this.w) * 12 + 80;
         text(result, this.x + 5, this.y + 55, this.w - 10, this.h - 40);
 	}

@@ -16,14 +16,18 @@ function defaultSetterData(x, y) {
         y: y,
         variable: null,// ref id
         operation: null,
-        path: {}
+        path: {},
     };
 }
 
 function defaultConditionData(x, y) {
     return {
         x: x,
-        y: y
+        y: y,
+        if_path: {},
+        else_path: {},
+        if_operation: null,
+        options: [],
     };
 }
 

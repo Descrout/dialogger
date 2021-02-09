@@ -1,18 +1,31 @@
 
 class Operation {
-	static ops = ["Reference", "Number", "String", "Bool", "+", "-", "*", "/", "%", "max", "min"];
+	static logic_ops = ["and", "or", "==", "!=", ">", "<", ">=", "<=", "===", "!=="];
+	static value_ops = ["Reference", "Number", "String", "Bool", "+", "-", "*", "/", "%", "max", "min"];
 
-	static reset(fs) {
+	static isLogic(op) {
+		return Operation.logic_ops.includes(op);
+	}
+
+	static canOnlyTwo(op) {
+		return Operation.isLogic(op) && Operation.logic_ops.indexOf(op) > 1;
+	}
+
+	static isRoot(op) {
+		return op === "Logic" || op === "Value";
+	}
+
+	static reset(fs, legend) {
 		const id = `#${fs.id}`;
 		$(id).empty();
-        $(id).append("<legend>Operation</legend>");
+        $(id).append(`<legend>${legend}</legend>`);
 	}
 
 	static construct(fs, data) {
 		const type = typeof data;
 
 		if(type === "object") {
-			if(data["var"]) {
+			if(data["var"]) { // For Character Field References
 				const _fs = Operation.createFieldset("Reference");
 				_fs.setAttribute("data-type", "select");
 				_fs.setAttribute("data-value", data["var"]);
@@ -31,21 +44,30 @@ class Operation {
 				return;
 			}
 
-			if(Array.isArray(data)) {
+			if(Array.isArray(data)) { // For Arrays
 				for(const d of data) {
 					Operation.construct(fs, d);
 				}
 				return;
 			}
 
-			for(const key of Object.keys(data)) {
+			for(const key of Object.keys(data)) { // For Object (Should contain just one key)
 				const _fs = Operation.createFieldset(key);
-				//Operation.addOperationAdder(_fs);
-				Operation.addSelect(_fs);
+				if(Operation.canOnlyTwo(key)){
+					const otherChild1 = Operation.createFieldset("Value");
+					Operation.construct(otherChild1, data[key][0]);
+					const otherChild2 = Operation.createFieldset("Value");
+					Operation.construct(otherChild2, data[key][1]);
+					_fs.appendChild(otherChild1);
+					_fs.appendChild(otherChild2);
+				}else {
+					Operation.addSelect(_fs);
+					Operation.construct(_fs, data[key]);
+				}
 				fs.appendChild(_fs);
-				Operation.construct(_fs, data[key]);
 				return;
 			}
+
 		}else if(type === "number") {
 			const _fs = Operation.createFieldset("Number");
 			Operation.addInput(_fs, "number", data);
@@ -62,34 +84,23 @@ class Operation {
 	}
 
 	static addSelect(fs) {
-		const select = document.createElement("select");
-		const isFirst = fs.firstChild.innerHTML === "Operation";
-		select.add(new Option("Insert", "nochange", true));
+		const legend = fs.firstChild.innerHTML.replace("&gt;", ">").replace("&lt;", "<");
+		const isRoot =  Operation.isRoot(legend);
+		const arr = (Operation.isLogic(legend) ||  legend === "Logic")
+		? Operation.logic_ops : Operation.value_ops;
 
-		for(const op of Operation.ops) {
-			select.add(new Option(op, op));
-		}
+		const select = document.createElement("select");
+		select.add(new Option("Insert", "nochange", true));
+		for(const op of arr) select.add(new Option(op, op));
 
 		select.onchange = (e) => {
 			Operation.setInside(fs, e.target.value);
 			
-			if(isFirst) e.target.remove();
+			if(isRoot) e.target.remove();
 			else e.target.selectedIndex = 0;
 		};
 
 		fs.appendChild(select);
-	}
-
-	static addOperationAdder(fs) {
-		const button = document.createElement("button");
-		button.type = "button";
-		button.innerHTML = "Add";
-		button.style = "position:relative;left:15px;top:-26px;";
-		button.onclick = () => {
-			Operation.addSelect(fs);
-		};
-
-		fs.appendChild(button);
 	}
 
 	static createFieldset(txt) {
@@ -102,13 +113,14 @@ class Operation {
 		legend.innerHTML = txt;
 		fs.appendChild(legend);
 
+		if(Operation.isRoot(txt)) return fs;
+
 		const closeButton = document.createElement("button");
 		closeButton.innerHTML = "X";
 		closeButton.style = "display: inline;position:relative;left:-24px;";
 		closeButton.onclick = (e) => {
-			if(fs.parentElement.firstChild.innerHTML === "Operation"){
+			if(Operation.isRoot(fs.parentElement.firstChild.innerHTML))
 				Operation.addSelect(fs.parentElement);
-			}
 			fs.remove();
 		};
 		fs.appendChild(closeButton);
@@ -166,8 +178,16 @@ class Operation {
 				Operation.addInput(child, "checkbox", false);
 			break;
 			default:
-				//Operation.addOperationAdder(child);
-				Operation.addSelect(child);
+				if(Operation.canOnlyTwo(op)) {
+					const otherChild1 = Operation.createFieldset("Value");
+					Operation.addSelect(otherChild1);
+
+					const otherChild2 = Operation.createFieldset("Value");
+					Operation.addSelect(otherChild2);
+
+					child.appendChild(otherChild1);
+					child.appendChild(otherChild2);
+				}else Operation.addSelect(child);
 		}
 
 		fs.appendChild(child);
@@ -175,7 +195,7 @@ class Operation {
 
 	static getData(fs) {
 		const type = fs.getAttribute("data-type");
-		const op = fs.firstChild.innerHTML;
+		const op = fs.firstChild.innerHTML.replace("&gt;", ">").replace("&lt;", "<");
 
 		if(type) {
 			const val = fs.getAttribute("data-value");
@@ -196,7 +216,7 @@ class Operation {
 			return data; // we out
 		}
 
-		if(op === "Operation") {
+		if(Operation.isRoot(op)) {
 			if(fs.lastChild.nodeName != "FIELDSET") {
 				alert("Pleace pick an operation.");
 				return null;
