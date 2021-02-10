@@ -88,33 +88,44 @@ class Dialog extends OptionPanel {
     }
 
     optionClicked(option) {
+        Operation.showAlerts = false;
+        GlobalEditor.openEditing(option);
     }
 
     checkRefs() {
         CharacterEditor.refMap.clearPanel(this.node.id);
-        const vars = CharacterEditor.parseForValues(this.node.data.text);
 
+        const vars = CharacterEditor.parseForValues(this.node.data.text);
         for(const variable of vars) {
             CharacterEditor.refMap.checkRef(variable, this.node.id);
+        }
+
+        for(const option of this.options) {
+            for(const ref of option.refs.values()) {
+                CharacterEditor.refMap.checkRef(ref.var, this.node.id);
+            }
+
+            const opt_vars = CharacterEditor.parseForValues(option.data.text);
+            for(const variable of opt_vars) {
+                CharacterEditor.refMap.checkRef(variable, this.node.id);
+            }
         }
     }
 
     renameRef(oldName, newName) {
-        oldName = "${" + oldName + "}";
-        newName = "${" + newName + "}";
+        this.node.data.text = this.node.data.text.replaceAll("${"+oldName+"}", "${"+newName+"}");
 
-        this.node.data.text = this.node.data.text.replaceAll(oldName, newName);
-    }
+        for(const option of this.options) {
+            const temp = option.refs.get(oldName);
+            if(temp) {
+                temp.var = newName;
 
-    invalidateRef(refID) {
-    }
+                option.refs.delete(oldName);
+                option.refs.set(newName, temp);
+            }
 
-    validateRef(refID) {
-    }
-
-    outView() {
-        return (this.relativeX + this.w + 48 < camera.x || this.relativeX - 48 > camera.x + camera.w ||
-            this.relativeY + this.h + (this.options.length * 40) < camera.y || this.relativeY > camera.y + camera.h);
+            option.setText(option.data.text.replaceAll("${"+oldName+"}", "${"+newName+"}"));
+        }
     }
 
     initLazy() {

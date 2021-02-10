@@ -386,6 +386,11 @@ class OptionPanel extends Panel {
         }
     }
 
+    outView() {
+        return (this.relativeX + this.w + 48 < camera.x || this.relativeX - 48 > camera.x + camera.w ||
+            this.relativeY + this.bottom < camera.y || this.relativeY > camera.y + camera.h);
+    }
+
     optionOrderChangeable() {
         const from = this.dragOption.from;
         const to = this.dragOption.to;
@@ -476,7 +481,7 @@ class UIOption extends UIElement {
         this.index = parent.options.length;
         this.relativeY = parent.h + 40 + 40 * this.index;
         
-        this.textButton = new Button(this.data.text, 42, 0, () => {this.parent.optionClicked(this)}, this.w - 84, this.h);
+        this.textButton = new Button(this.data.text, 42, 0, () => {this.parent.optionClicked(this)}, this.w - 84, this.h, 5);
         this.textButton.color = color(random(255), random(255), random(255)); //placeholder
 
         this.addChild(new Button("X", 0, 0, () => {this.remove()}, 42, this.h));
@@ -485,11 +490,38 @@ class UIOption extends UIElement {
         this.addChild(this.optNode);
     }
 
+    setOperation(field) {
+        const operation = Operation.getData(field);
+        if(operation) {
+            this.data.operation = operation;
+            this.refs = Operation.getRefs(operation); 
+            return true;
+        }
+        return false;
+    }
+
+    setText(txt) {
+        this.data.text = txt;
+        let result = "";
+        let maxLen = 0;
+
+        for(let i = 0; maxLen < this.textButton.w - 24; i++) {
+            const char = txt[i];
+            if(!char) break;
+            maxLen += textWidth(char);
+            result += char;
+        }
+
+        if(txt.length - result.length >= 3) result += "...";
+        this.textButton.val = result;
+    }
+
     remove(){
         super.remove();
         this.optNode.remove();
         this.parent.splitOptions(this.index, null);
         this.parent.calcBottom();
+        this.parent.checkRefs();
     }
 
     setNewIndex(i) {

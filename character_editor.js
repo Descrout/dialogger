@@ -1,5 +1,3 @@
-//blacklist : ".", "undefined", "name"
-
 class CharacterEditor {
     static fields = null;
     static editedNode = null;

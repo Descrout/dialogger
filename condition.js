@@ -39,6 +39,7 @@ class ConditionEditor {
         ConditionEditor.dialog.dialog("open");
         editor.pause = true;
         ConditionEditor.tempNode = node;
+        Operation.showAlerts = true;
         ConditionEditor.refreshFields();
     }
 
@@ -59,18 +60,19 @@ class ConditionEditor {
 
 class Condition extends OptionPanel {
 	constructor(node) {
-		super(node, 260, 80);
+		super(node, 260, 85);
         this.type = "condition";
 
-        this.addElseIf = new Button("+", 0, this.h, () => {
+        this.addElseIf = new Button("Add Else If", 0, this.h, () => {
             this.addOption();
         }, this.w, 40);
-        this.addElseIf.toffX = 165;
+        this.addElseIf.toffX = 138;
         this.addChild(this.addElseIf);
 	}
 
 	optionClicked(option) {
-        
+		Operation.showAlerts = true;
+        GlobalEditor.openEditing(option);
     }
 
 	setOperation(field) {
@@ -117,8 +119,7 @@ class Condition extends OptionPanel {
 	            option.refs.delete(oldName);
 	            option.refs.set(newName, temp);
 
-	            option.data.text = this.text.replace("${"+oldName+"}", "${"+newName+"}");
-	            option.textButton.val = option.data.text;
+	            option.setText(option.data.text.replaceAll("${"+oldName+"}", "${"+newName+"}"));
 	        }
         }
     }
@@ -136,8 +137,7 @@ class Condition extends OptionPanel {
 	initLazy() {
 		for(const opt of this.node.data.options) {
             const option = this.addOption(opt);
-            opt.text = Operation.getText(opt.operation);
-            option.textButton.val = opt.text;
+            option.setText(Operation.getText(opt.operation));
         }
 
         this.if_text = Operation.getText(this.node.data.if_operation); 

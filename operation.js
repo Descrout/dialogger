@@ -3,6 +3,8 @@ class Operation {
 	static logic_ops = ["and", "or", "==", "!=", ">", "<", ">=", "<=", "===", "!=="];
 	static value_ops = ["Reference", "Number", "String", "Bool", "+", "-", "*", "/", "%", "max", "min"];
 
+	static showAlerts = true;
+
 	static isLogic(op) {
 		return Operation.logic_ops.includes(op);
 	}
@@ -205,7 +207,7 @@ class Operation {
 				if(val) {
 					data["var"] = val;
 				}else {
-					alert("Please pick the reference.");
+					if(Operation.showAlerts) alert("Please pick the reference.");
 					return null;
 				}
 				
@@ -218,7 +220,7 @@ class Operation {
 
 		if(Operation.isRoot(op)) {
 			if(fs.lastChild.nodeName != "FIELDSET") {
-				alert("Pleace pick an operation.");
+				if(Operation.showAlerts) alert("Pleace pick an operation.");
 				return null;
 			}
 			return Operation.getData(fs.lastChild);
@@ -239,7 +241,7 @@ class Operation {
 		}
 
 		if(fsCount < 2) {
-			alert("Error: Operations should atleast contain 2 child.")
+			if(Operation.showAlerts) alert("Error: Operations should atleast contain 2 child.")
 			return null;
 		}
 

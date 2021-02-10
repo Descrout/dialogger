@@ -89,6 +89,22 @@
     </form>
   </div>
 
+  <div id="global-edit" title="Construct an Operation">
+    <form id="global-edit-form">
+      <fieldset class="outer_fieldset">
+
+        <div id="choice-div" style="display:none;">
+          <label for="choice">Choice Text</label>
+          <input type="text" name="choice" id="choice" value="" class="text ui-widget-content ui-corner-all">
+        </div>
+        
+        <fieldset id="global_fs" style="margin-top: 16px;"></fieldset>
+        <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+      </fieldset>
+    </form>
+  </div>
+
+  <script src="global_editor.js"></script>
   <script src="operation.js"></script>
   <script src="refmap.js"></script>
   <script src="ui.js"></script>
