@@ -89,45 +89,41 @@ class Condition extends OptionPanel {
 	checkRefs() {
     	CharacterEditor.refMap.clearPanel(this.node.id);
         
-        for(const ref of this.refs.values()) {
-            CharacterEditor.refMap.checkRef(ref.var, this.node.id);
+        for(const ref of this.refs.keys()) {
+            CharacterEditor.refMap.checkRef(ref, this.node.id);
         }
 
         for(const option of this.options) {
-            for(const ref of option.refs.values()) {
-	            CharacterEditor.refMap.checkRef(ref.var, this.node.id);
+            for(const ref of option.refs.keys()) {
+	            CharacterEditor.refMap.checkRef(ref, this.node.id);
 	        }
         }
     }
 
     renameRef(oldName, newName) {
-        const temp = this.refs.get(oldName);
-        if(temp) {
-            temp.var = newName;
+        const temps = this.refs.get(oldName);
+        if(temps) {
+            for(const temp of temps) {
+                temp.var = newName;
+            }
 
             this.refs.delete(oldName);
-            this.refs.set(newName, temp);
-
-            this.if_text = this.if_text.replace("${"+oldName+"}", "${"+newName+"}");
+            this.refs.set(newName, temps);
+            this.if_text = this.if_text.replaceAll("${"+oldName+"}", "${"+newName+"}");
         }
 
         for(const option of this.options) {
-        	const temp = option.refs.get(oldName);
-	        if(temp) {
-	            temp.var = newName;
-
+        	const temps = option.refs.get(oldName);
+	        if(temps) {
+	            for(const temp of temps) {
+                	temp.var = newName;
+            	}
+            	
 	            option.refs.delete(oldName);
-	            option.refs.set(newName, temp);
-
+	            option.refs.set(newName, temps);
 	            option.setText(option.data.text.replaceAll("${"+oldName+"}", "${"+newName+"}"));
 	        }
         }
-    }
-
-    invalidateRef(refID) {
-    }
-
-    validateRef(refID) {
     }
 
 	editButton(){

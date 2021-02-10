@@ -101,8 +101,8 @@ class Dialog extends OptionPanel {
         }
 
         for(const option of this.options) {
-            for(const ref of option.refs.values()) {
-                CharacterEditor.refMap.checkRef(ref.var, this.node.id);
+            for(const ref of option.refs.keys()) {
+                CharacterEditor.refMap.checkRef(ref, this.node.id);
             }
 
             const opt_vars = CharacterEditor.parseForValues(option.data.text);
@@ -116,12 +116,14 @@ class Dialog extends OptionPanel {
         this.node.data.text = this.node.data.text.replaceAll("${"+oldName+"}", "${"+newName+"}");
 
         for(const option of this.options) {
-            const temp = option.refs.get(oldName);
-            if(temp) {
-                temp.var = newName;
+            const temps = option.refs.get(oldName);
+            if(temps) {
+                for(const temp of temps) {
+                    temp.var = newName;
+                }
 
                 option.refs.delete(oldName);
-                option.refs.set(newName, temp);
+                option.refs.set(newName, temps);
             }
 
             option.setText(option.data.text.replaceAll("${"+oldName+"}", "${"+newName+"}"));

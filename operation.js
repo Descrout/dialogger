@@ -254,7 +254,11 @@ class Operation {
         if(typeof data === "object") {
         	if(data === null) return refs;
             if(data["var"]) {
-            	refs.set(data["var"], data);
+            	if(refs.has(data["var"])) {
+            		refs.get(data["var"]).push(data);
+            	}else {
+            		refs.set(data["var"], [data]);
+            	}
             }
 
             if(Array.isArray(data)) {

@@ -91,30 +91,25 @@ class Setter extends Panel {
 
         CharacterEditor.refMap.checkRef(this.node.data.variable, this.node.id);
         
-        for(const ref of this.refs.values()) {
-            CharacterEditor.refMap.checkRef(ref.var, this.node.id);
+        for(const ref of this.refs.keys()) {
+            CharacterEditor.refMap.checkRef(ref, this.node.id);
         }
     }
 
     renameRef(oldName, newName) {
         if(oldName === this.node.data.variable) this.node.data.variable = newName;
-        const temp = this.refs.get(oldName);
-        if(temp) {
-            temp.var = newName;
+        const temps = this.refs.get(oldName);
+        if(temps) {
+            for(const temp of temps) {
+                temp.var = newName;
+            }
 
             this.refs.delete(oldName);
-            this.refs.set(newName, temp);
-
-            this.text = this.text.replace("${"+oldName+"}", "${"+newName+"}");
+            this.refs.set(newName, temps);
+            this.text = this.text.replaceAll("${"+oldName+"}", "${"+newName+"}");
         }
     }
-
-    invalidateRef(refID) {
-    }
-
-    validateRef(refID) {
-    }
-
+    
 	editButton(){
 		SetterEditor.openEditing(this.node);
 	}
