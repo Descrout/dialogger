@@ -9,7 +9,6 @@ class UIElement {
         this.relativeY = y;
         this.children = [];
         this.visible = true;
-        this.isWorld = true;
     }
 
     remove(){
@@ -25,9 +24,7 @@ class UIElement {
         child.parent = this;
     }
 
-    mousePressed() {
-
-    }
+    mousePressed() {}
 
     listenMousePress() {
         for (let i = this.children.length - 1; i >= 0; i--) {
@@ -44,13 +41,6 @@ class UIElement {
     }
 
     isOn() {
-        if (this.isWorld)
-            return this.isOnWorld();
-
-        return (mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h);
-    }
-
-    isOnWorld() {
         const x = this.x * camera.scale - camera.rawX;
         const y = this.y * camera.scale - camera.rawY;
         const w = this.w * camera.scale;
@@ -59,9 +49,7 @@ class UIElement {
         return (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h);
     }
 
-    draw() {
-
-    }
+    draw() {}
 
     sync() {
         this.x = this.relativeX;
@@ -82,57 +70,6 @@ class UIElement {
         for (let child of this.children) {
             child.sync();
         }
-    }
-}
-
-class BottomMenu extends UIElement {
-    constructor() {
-        super(0, height - 32, width, 32);
-        this.isWorld = false;
-
-        this.slider = createSlider(0.5, 2.5, 1.0, 0.01);
-        this.slider.style('width', '100px');
-        this.slider.input(() => this.sChanged());
-
-        this.refreshMenu();
-    }
-
-    sChanged() {
-        camera.scale = this.slider.value();
-        camera.rawX = camera.x * camera.scale;
-        camera.rawY = camera.y * camera.scale;
-        camera.rawToPos();
-    }
-
-    refreshMenu() {
-        this.relativeY = height - 32;
-        this.w = width;
-        const canvasDiv = document.getElementById("canvasDiv");
-        this.slider.position(canvasDiv.getBoundingClientRect().x + width - 120, height - 25);
-    }
-
-
-    draw() {
-        stroke(200);
-        fill(255);
-        rect(this.x, this.y, this.w, this.h);
-        fill(0);
-        noStroke();
-        text(`${camera.scale.toFixed(1)}`, this.x + width - 140, this.y + 22);
-        text(`${floor(camera.x)}, ${floor(camera.y)}`, this.x + 10, this.y + 20);
-    }
-}
-
-class TopMenu extends UIElement {
-    constructor() {
-        super(0, 0, width, 64);
-        this.isWorld = false;
-    }
-
-    draw() {
-        stroke(200);
-        fill(255);
-        rect(this.x, this.y, this.w, this.h);
     }
 }
 
@@ -348,7 +285,7 @@ class Panel extends UIElement {
             this.relativeX += movedX / camera.scale;
             this.relativeY += movedY / camera.scale;
             this.relativeX = max(this.relativeX, 0);
-            this.relativeY = max(this.relativeY, editor.topMenu.h / camera.scale);
+            this.relativeY = max(this.relativeY, 0);
         }
 
         this.node.data.x = this.relativeX;

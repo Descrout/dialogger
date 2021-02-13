@@ -71,7 +71,7 @@ class SetterEditor {
 
 class Setter extends Panel {
 	constructor(node) {
-		super(node, 230, 80);
+		super(node, 260, 80);
         this.type = "setter";
 	}
 

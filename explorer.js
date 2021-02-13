@@ -22,12 +22,10 @@ class Explorer {
             "plugins": ["contextmenu"],
             "contextmenu": {
                 "items": (node) => {
-
-                    if (node.a_attr.type == "folder") {
+                    if (node.a_attr.type == "folder") 
                         return Explorer.getFolderCtx(node);
-                    } else {
-                        return Explorer.getFileCtx(node);
-                    }
+
+                    return Explorer.getFileCtx(node);
                 }
             }
         });
@@ -41,6 +39,90 @@ class Explorer {
                 editor.getPanel(node.id).focus();
         });
 
+        $("#jsTreeDiv").on('refresh.jstree', () => {
+            CharacterEditor.refMap = new RefMap();
+            const tree = Explorer.tree();
+
+            ////Dialogs
+            for (let node_id of tree.get_node(2).children) {
+                const dia_node = tree.get_node(node_id);
+                const dia = new Dialog(dia_node);
+                editor.panels.set(node_id, dia);
+            }
+
+            ////Setters
+            for (let node_id of tree.get_node(3).children) {
+                const setter_node = tree.get_node(node_id);
+                const setter = new Setter(setter_node);
+                editor.panels.set(node_id, setter);
+            }
+
+            ////Conditions
+            for (let node_id of tree.get_node(4).children) {
+                const condition_node = tree.get_node(node_id);
+                const condition = new Condition(condition_node);
+                editor.panels.set(node_id, condition);
+            }
+
+            /////all panel nodes
+            for (const panel of editor.panels.values()) {
+                panel.initLazy();
+                panel.checkRefs();
+                panel.sync();
+            }
+        });
+    }
+
+    static saveToLocal() {
+        localStorage.removeItem("current");
+        localStorage.setItem("current", JSON.stringify(Explorer.tree().get_json('#')));
+    }
+
+    static loadFromLocal() {
+          const current = localStorage.getItem("current");
+          if(current) {
+              const data = JSON.parse(current);
+              if(data) Explorer.newProject(data);
+          }
+    }
+
+    static newProject(data) {
+        const tree = Explorer.tree();
+        editor.panels.clear();
+        tree.settings.core.data = data || {"url": "root.json", "dataType": "json"};
+        tree.refresh();
+    }
+
+    static play() {
+
+    }
+
+    static export() {
+
+    }
+
+    static save() {
+        saveJSON(Explorer.tree().get_json('#'), 'save.json');
+    }
+
+    static load() {
+        document.getElementById("saveOpener").addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            let reader = new FileReader();
+            reader.onload = () => {
+                if (!reader.result) {
+                    alert("Cannot open!");
+                    return;
+                }
+
+                const parsed = JSON.parse(reader.result);
+                Explorer.newProject(parsed);
+            };
+            reader.readAsText(file);
+        });
+        $("#saveOpener").trigger("click");
     }
 
     static tree() {
@@ -57,11 +139,11 @@ class Explorer {
                     if (node.id == "1") {
                         CharacterEditor.openEditing();
                     } else if (node.id == "2") {
-                        editor.newPanel("dialog");
+                        editor.addDialog();
                     } else if (node.id == "3") {
-                        editor.newPanel("setter");
+                        editor.addSetter();
                     } else if (node.id == "4") {
-                        editor.newPanel("condition");
+                        editor.addCondition();
                     }
                 }
             }

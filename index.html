@@ -12,26 +12,73 @@
   <link rel="stylesheet" type="text/css" href="css/style.min.css">
 
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Dialogger</title>
 </head>
 <body>
-  <input type="file" id="saveOpener" style="display:none">
+  <input type="file" id="saveOpener" style="display:none;">
 
-  <div id="jsTreeDiv" style="float: left;height:100vh;" draggable="false"></div>
-  <div id="resizer" style="width: 2px;float: left;height:100vh;background-color: rgb(156, 154, 154);cursor: w-resize;"
+  <div id="jsTreeDiv" style="float: left;height: 100vh;" draggable="false"></div>
+  <div id="resizer" style="width: 2px;float: left;height: 100vh;background-color: rgb(156, 154, 154);cursor: w-resize;"
     draggable="true"></div>
-  <div id="canvasDiv" style="float: left;height:100vh;" draggable="false"></div>
+  <div style="float: left; height: 7vh; padding-left: 15px; padding-top: 7px;" class="unselectable">
 
-  <div id="character-edit" title="Create a character">
+    <button type="button" class="ui-button ui-widget ui-corner-all"
+    onclick='Explorer.play()'>Play</button>
+
+    <button type="button" class="ui-button ui-widget ui-corner-all" 
+    onclick='Explorer.newProject()'>New</button>
+
+    <span style="margin-left: 15px;">Local : </span>
+
+    <button type="button" class="ui-button ui-widget ui-corner-all"
+    onclick='Explorer.loadFromLocal()'>Load</button>
+
+    <button type="button" class="ui-button ui-widget ui-corner-all"
+    onclick='Explorer.saveToLocal()'>Save</button>
+
+    <span style="margin-left: 15px;">File : </span>
+
+    <button type="button" class="ui-button ui-widget ui-corner-all"
+    onclick='Explorer.load()'>Load</button>
+
+    <button type="button" class="ui-button ui-widget ui-corner-all"
+    onclick='Explorer.save()'>Save</button>
+
+    <button type="button" class="ui-button ui-widget ui-corner-all"
+    onclick='Explorer.export()'>Export</button>
+
+    <span  style="margin-left: 15px;">Add : </span>
+
+    <button type="button" class="ui-button ui-widget ui-corner-all"
+    onclick='CharacterEditor.openEditing()'>Character</button>
+
+    <button type="button" class="ui-button ui-widget ui-corner-all" 
+    onclick='editor.addDialog()'>Dialog</button>
+
+    <button type="button" class="ui-button ui-widget ui-corner-all"
+    onclick='editor.addSetter()'>Setter</button>
+
+    <button type="button" class="ui-button ui-widget ui-corner-all"
+    onclick='editor.addCondition()'>Condition</button>
+  </div>
+
+  <div id="canvasDiv" style="float: left;height: 88vh;border-bottom:1px solid gray;border-top:1px solid gray;" draggable="false"></div>
+
+  <div style="float: left;height: 5; padding-left: 15px; padding-top: 7px;" class="unselectable">
+    <span id="camPos">0, 0</span>
+  </div>
+
+  <div id="character-edit" title="Create a character" class="unselectable">
     <form>
       <fieldset class="outer_fieldset">
         <label for="name">Name</label>
         <input type="text" name="name" id="name" value="New Character" class="text ui-widget-content ui-corner-all">
         <fieldset>
           <legend>Add Field</legend>
-          <button type="button" name="addNumber" id="addNumber">Number</button>
-          <button type="button" name="addString" id="addString">String</button>
-          <button type="button" name="addBoolean" id="addBoolean">Boolean</button>
+          <button type="button" name="addNumber" id="addNumber" class="ui-button ui-widget ui-corner-all">Number</button>
+          <button type="button" name="addString" id="addString" class="ui-button ui-widget ui-corner-all">String</button>
+          <button type="button" name="addBoolean" id="addBoolean" class="ui-button ui-widget ui-corner-all">Boolean</button>
         </fieldset>
         <fieldset id="fieldHolder" style="width:100%;"></fieldset>
         <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
@@ -39,7 +86,7 @@
     </form>
   </div>
 
-  <div id="dialog-edit" title="Edit the dialogue">
+  <div id="dialog-edit" title="Edit the dialogue" class="unselectable">
     <form id="dialog-edit-form">
       <fieldset class="outer_fieldset">
         <label for="dialog_name">Name</label>
@@ -60,7 +107,7 @@
     </form>
   </div>
 
-  <div id="setter-edit" title="Edit the setter">
+  <div id="setter-edit" title="Edit the setter" class="unselectable">
     <form id="setter-edit-form">
       <fieldset class="outer_fieldset">
         <label for="setter_name">Name</label>
@@ -76,7 +123,7 @@
     </form>
   </div>
 
-  <div id="condition-edit" title="Edit the condition">
+  <div id="condition-edit" title="Edit the condition" class="unselectable">
     <form id="condition-edit-form">
       <fieldset class="outer_fieldset">
         <label for="condition_name">Name</label>
@@ -89,7 +136,7 @@
     </form>
   </div>
 
-  <div id="global-edit" title="Construct an Operation">
+  <div id="global-edit" title="Construct an Operation" class="unselectable">
     <form id="global-edit-form">
       <fieldset class="outer_fieldset">
 

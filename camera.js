@@ -9,6 +9,7 @@ class Camera {
         this.mouseX = 0;
         this.mouseY = 0;
         this.scale = 1.0;
+        this.posOut = document.getElementById("camPos");
     }
 
     reset() {
@@ -16,7 +17,7 @@ class Camera {
         this.rawX = 0;
         this.rawY = 0;
         this.rawToPos();
-        editor.bottomMenu.slider.value(camera.scale);
+        editor.slider.value(this.scale);
     }
 
     drag() {
@@ -31,7 +32,7 @@ class Camera {
         this.rawX = this.x * this.scale;
         this.rawY = this.y * this.scale;
         this.rawToPos();
-        editor.bottomMenu.slider.value(camera.scale);
+        editor.slider.value(this.scale);
     }
 
     rawToPos() {
@@ -39,6 +40,8 @@ class Camera {
         this.rawY = max(this.rawY, 0.0);
         this.x = this.rawX / this.scale;
         this.y = this.rawY / this.scale;
+        editor.scaleOut.html(`${this.scale.toFixed(1)}`);
+        this.posOut.innerHTML = `${floor(this.x)}, ${floor(this.y)}`;
     }
 
     update() {

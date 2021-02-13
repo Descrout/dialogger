@@ -36,34 +36,25 @@ class Editor {
     constructor() {
         this.pause = false;
         this.dragRider = null;
-
-        this.topMenu = new TopMenu();
-        this.bottomMenu = new BottomMenu();
-
         this.panels = new Map();
 
-        this.topMenu.addChild(new Button("Save", 10, 10, Editor.save));
-        this.topMenu.addChild(new Button("Load", 120, 10, () => this.load()));
-
-        this.topMenu.addChild(new Button("Dialogue", 320, 10, () => this.newPanel("dialog"), 116, null, 26));
-        this.topMenu.addChild(new Button("Setter", 448, 10, () => this.newPanel("setter"), 90, null, 22));
-        this.topMenu.addChild(new Button("Condition", 550, 10, () => this.newPanel("condition"), 116, null, 26));
-
-        for (const el of this.topMenu.children) {
-            el.isWorld = false;
-        }
+        this.scaleOut = createSpan("1.0");
+        this.scaleOut.class("unselectable");
+        
+        this.slider = createSlider(0.5, 2.5, 1.0, 0.01);
+        this.slider.style('width', '100px');
+        this.slider.input(() => {
+            camera.scale = this.slider.value();
+            camera.rawX = camera.x * camera.scale;
+            camera.rawY = camera.y * camera.scale;
+            camera.rawToPos();
+        });
     }
 
     mousePressed() {
         if (mouseButton == CENTER) return;
         this.tempRider = this.dragRider;
         this.dragRider = null;
-
-        if (this.topMenu.listenMousePress())
-            return;
-
-        if (this.bottomMenu.listenMousePress())
-            return;
 
         const panels = Array.from(this.panels.values()).reverse();
         for (const panel of panels) {
@@ -130,26 +121,12 @@ class Editor {
         }
     }
 
-    newPanel(type) {
-        switch (type) {
-            case "dialog":
-                this.addDialog();
-                break;
-            case "setter":
-                this.addSetter();
-                break;
-            case "condition":
-                this.addCondition();
-                break;
-        }
-    }
-
     addSetter() {
         const x = camera.x + camera.w / 2;
         const y = camera.y + camera.h / 2;
         const data = defaultSetterData(x, y);
         const node_id = Explorer.tree().create_node(3, {
-            text: "Setter",
+            text: `Setter ${this.panels.size + 1}`,
             icon: 'jstree-file',
             a_attr: {
                 type: 'file',
@@ -169,7 +146,7 @@ class Editor {
         const y = camera.y + camera.h / 2;
         const data = defaultConditionData(x, y);
         const node_id = Explorer.tree().create_node(4, {
-            text: "Condition",
+            text: `Condition ${this.panels.size + 1}`,
             icon: 'jstree-file',
             a_attr: {
                 type: 'file',
@@ -189,7 +166,7 @@ class Editor {
         const y = camera.y + camera.h / 2;
         const data = defaultDialogData(x, y);
         const node_id = Explorer.tree().create_node(2, {
-            text: "New Dialogue",
+            text: `Dialog ${this.panels.size + 1}`,
             icon: 'jstree-file',
             a_attr: {
                 type: 'file',
@@ -222,71 +199,6 @@ class Editor {
         this.panels.delete(panel.node.id);
     }
 
-    static save() {
-        saveJSON(Explorer.tree().get_json('#'), 'save.json');
-    }
-
-    load() {
-        document.getElementById("saveOpener").addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            let reader = new FileReader();
-            reader.onload = () => {
-                if (!reader.result) {
-                    alert("Cannot open!");
-                    return;
-                }
-
-                const parsed = JSON.parse(reader.result);
-
-                if (!parsed) {
-                    alert("Cannot open!");
-                    return;
-                }
-
-                this.panels.clear();
-
-                Explorer.tree().settings.core.data = parsed;
-                Explorer.tree().refresh();
-
-                $("#jsTreeDiv").on('refresh.jstree', () => {
-                    CharacterEditor.refMap = new RefMap();
-
-                    ////Dialogs
-                    for (let node_id of Explorer.tree().get_node(2).children) {
-                        const dia_node = Explorer.tree().get_node(node_id);
-                        const dia = new Dialog(dia_node);
-                        this.panels.set(node_id, dia);
-                    }
-
-                    ////Setters
-                    for (let node_id of Explorer.tree().get_node(3).children) {
-                        const setter_node = Explorer.tree().get_node(node_id);
-                        const setter = new Setter(setter_node);
-                        this.panels.set(node_id, setter);
-                    }
-
-                    ////Conditions
-                    for (let node_id of Explorer.tree().get_node(4).children) {
-                        const condition_node = Explorer.tree().get_node(node_id);
-                        const condition = new Condition(condition_node);
-                        this.panels.set(node_id, condition);
-                    }
-
-                    /////all panel nodes
-                    for (const panel of this.panels.values()) {
-                        panel.initLazy();
-                        panel.checkRefs();
-                        panel.sync();
-                    }
-                });
-            };
-            reader.readAsText(file);
-        });
-        $("#saveOpener").trigger("click");
-    }
-
     drawBg() {
         background(255);
 
@@ -301,6 +213,7 @@ class Editor {
         const widthSize = floor(w / tileSize) + camX + 2;
         const heightSize = floor(h / tileSize) + camY + 2;
 
+        strokeWeight(1);
         stroke(200);
 
         for (let i = camX; i < widthSize; i++) {
@@ -333,12 +246,8 @@ class Editor {
     }
 
     resize() {
-        this.bottomMenu.refreshMenu();
-        this.topMenu.w = width;
-    }
-
-    drawStatic() {
-        this.topMenu.sync();
-        this.bottomMenu.sync();
+        const cx = document.getElementById("canvasDiv").getBoundingClientRect().x;
+        this.scaleOut.position(cx + width - 150, height + 54);
+        this.slider.position(cx + width - 120, height + 54);
     }
 }

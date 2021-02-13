@@ -59,10 +59,6 @@ function draw() {
 }
 
 function render() {
-  push();
   camera.update();
   editor.draw();
-  pop();
-
-  editor.drawStatic();
 }
