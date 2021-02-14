@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PLAY</title>
+</head>
+<body>
+<script>
+	const dataStr = localStorage.getItem("export");
+	if(!dataStr) {
+		alert("No export found.");
+	}else {
+		const data = JSON.parse(dataStr);
+		console.log(data);
+	}
+</script>
+</body>
+</html>

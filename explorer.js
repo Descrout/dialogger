@@ -120,15 +120,112 @@ class Explorer {
     }
 
     static play() {
-
+        localStorage.removeItem("export");
+        localStorage.setItem("export", JSON.stringify(Explorer.export()));
+        window.open("/play.html");
     }
 
     static export() {
+        const tree = Explorer.tree();
+        const result = {};
+        const node = tree.get_node("1");
+        if(!node.data.starting) {
+            alert("Pick starting panel!");
+            return;
+        }
+        const sPanel = editor.getPanel(node.data.starting);
+        if(!sPanel) {
+            alert("Pick starting panel!");
+            return;
+        }
 
+        const pathFromPanel = (panel) => {
+            return {id: panel.node.id, type: panel.type};
+        };
+
+        const pathWithoutPoints = (p) => {
+            return {id: p.id, type: p.type};
+        }; 
+
+        result.starting = pathFromPanel(sPanel);
+        result.characters = {};
+
+        for (const node_id of tree.get_node(1).children) {
+            const character = tree.get_node(node_id);
+            
+            result.characters[character.text] = {name: character.text};
+
+            for (const field of character.data.fields) {
+                result.characters[character.text][field.name] = field.value;
+            }
+        }
+
+        result.dialog = {};
+
+        for (const node_id of tree.get_node(2).children) {
+            const dialog = tree.get_node(node_id);
+            result.dialog[node_id] = {character: tree.get_node(dialog.data.character).text};
+            result.dialog[node_id].time_limit = parseFloat(dialog.data.time_limit);
+            result.dialog[node_id].text = dialog.data.text;
+
+            if(dialog.data.time_path && Object.keys(dialog.data.time_path).length != 0) {
+               result.dialog[node_id].time_path = pathWithoutPoints(dialog.data.time_path);
+            } else result.dialog[node_id].time_path = null;
+
+            const options = [];
+
+            for(const option of dialog.data.options) {
+                options.push({
+                    text: option.text, 
+                    operation: option.operation, 
+                    path: pathWithoutPoints(option.path)
+                });
+            }
+
+            result.dialog[node_id].options = options;
+        }
+
+        result.setter = {};
+        for (const node_id of tree.get_node(3).children) {
+            const setter = tree.get_node(node_id);
+            result.setter[node_id] = {};
+            result.setter[node_id].variable = setter.data.variable;
+            result.setter[node_id].operation = setter.data.operation;
+            result.setter[node_id].path = pathWithoutPoints(setter.data.path);
+        }
+
+        result.condition = {};
+        for (const node_id of tree.get_node(4).children) {
+            const condition = tree.get_node(node_id);
+            result.condition[node_id] = {};
+            const paths = [];
+            result.condition[node_id].operation = {"if": []};
+
+            paths.push(pathWithoutPoints(condition.data.if_path));
+            result.condition[node_id].operation.if.push(condition.data.if_operation);
+            result.condition[node_id].operation.if.push(0);
+
+            let counter = 0;
+
+            for(const option of condition.data.options) {
+                counter++;
+                paths.push(pathWithoutPoints(option.path));
+                result.condition[node_id].operation.if.push(option.operation);
+                result.condition[node_id].operation.if.push(counter);
+            }
+
+            paths.push(pathWithoutPoints(condition.data.else_path));
+            result.condition[node_id].operation.if.push(counter + 1);
+
+            result.condition[node_id].paths = paths;
+        }
+
+        return result;
     }
 
     static save() {
-        saveJSON(Explorer.tree().get_json('#'), 'save.json');
+        saveJSON(Explorer.tree().get_json('#'), 'forLoad.json');
+        saveJSON(Explorer.export(), 'forGame.json');
     }
 
     static load() {
