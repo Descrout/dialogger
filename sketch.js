@@ -23,9 +23,12 @@ function keyPressed() {
 function windowResized() {
   const jsTreeDiv = document.getElementById("jsTreeDiv");
   const canvasDiv = document.getElementById("canvasDiv");
+  const topMenu = document.getElementById("topMenu");
 
   jsTreeDiv.style.width = `${Explorer.resizerPos}px`;
-  canvasDiv.style.width = `${windowWidth - Explorer.resizerPos - 2}px`;
+  const w = `${windowWidth - Explorer.resizerPos - 2}px`;
+  canvasDiv.style.width = w;
+  topMenu.style.width = w;
 
   resizeCanvas(canvasDiv.clientWidth, canvasDiv.clientHeight);
   editor.resize();

@@ -118,6 +118,7 @@ class Operation {
 		if(Operation.isRoot(txt)) return fs;
 
 		const closeButton = document.createElement("button");
+		closeButton.type = "button";
 		closeButton.innerHTML = "X";
 		closeButton.style = "display: inline;position:relative;left:-24px;";
 		closeButton.onclick = (e) => {

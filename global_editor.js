@@ -22,6 +22,7 @@ class GlobalEditor {
     static form = GlobalEditor.dialog.find("form").on("submit", function (event) {
         event.preventDefault();
         GlobalEditor.finishEditing();
+        console.log("yo eyo");
     });
 
     static refreshFields() {
@@ -66,6 +67,7 @@ class GlobalEditor {
             $("#global_fs").empty();
             option.parent.checkRefs();
             GlobalEditor.dialog.dialog("close");
+            Explorer.changeHappened();
         }
     }
 }

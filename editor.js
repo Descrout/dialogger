@@ -73,8 +73,10 @@ class Editor {
                             if (dx * dx < 64 && dy * dy < 64) {
                                 if (mouseButton == LEFT)
                                     node.lineRider.dragPoint = i;
-                                else if(node.lineRider.dragPoint === -1)
+                                else if(node.lineRider.dragPoint === -1) {
                                     points.splice(i, 1);
+                                    Explorer.changeHappened();
+                                }
                                 return;
                             }
                         }
@@ -118,6 +120,7 @@ class Editor {
 
             node.lineRider = new LineRider(node.saveData, node, endNode);
             this.tempRider = null;
+            Explorer.changeHappened();
         }
     }
 
@@ -139,6 +142,7 @@ class Editor {
         setter.initLazy();
         this.panels.set(node_id, setter);
         setter.focus();
+        Explorer.changeHappened();
     }
 
     addCondition() {
@@ -159,6 +163,7 @@ class Editor {
         condition.initLazy();
         this.panels.set(node_id, condition);
         condition.focus();
+        Explorer.changeHappened();
     }
 
     addDialog() {
@@ -179,6 +184,7 @@ class Editor {
         dialog.initLazy();
         this.panels.set(node_id, dialog);
         dialog.focus();
+        Explorer.changeHappened();
     }
 
     getPanel(node_id) {
@@ -190,6 +196,7 @@ class Editor {
         Explorer.tree().delete_node(panel_node);
         this.getPanel(panel_node.id).clearNodes();
         this.panels.delete(panel_node.id);
+        Explorer.changeHappened();
     }
 
     removePanel(panel) {
@@ -197,6 +204,7 @@ class Editor {
         Explorer.tree().delete_node(panel.node);
         this.getPanel(panel.node.id).clearNodes();
         this.panels.delete(panel.node.id);
+        Explorer.changeHappened();
     }
 
     drawBg() {

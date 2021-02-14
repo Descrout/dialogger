@@ -12,12 +12,16 @@ class Camera {
         this.posOut = document.getElementById("camPos");
     }
 
-    reset() {
-        this.scale = 1.0;
-        this.rawX = 0;
-        this.rawY = 0;
+    set(x, y, scale) {
+        this.scale = scale;
+        this.rawX = x;
+        this.rawY = y;
         this.rawToPos();
         editor.slider.value(this.scale);
+    }
+
+    reset() {
+        this.set(0, 0, 1.0);
     }
 
     drag() {
@@ -42,6 +46,13 @@ class Camera {
         this.y = this.rawY / this.scale;
         editor.scaleOut.html(`${this.scale.toFixed(1)}`);
         this.posOut.innerHTML = `${floor(this.x)}, ${floor(this.y)}`;
+    }
+
+    save() {
+        const node = Explorer.tree().get_node("1");
+        if(node && node.data && (this.rawX != 0 || this.rawY != 0 || this.scale != 1)) {
+            node.data.camera = {rawX: this.rawX, rawY: this.rawY, scale: this.scale};
+        }
     }
 
     update() {

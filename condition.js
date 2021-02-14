@@ -54,6 +54,7 @@ class ConditionEditor {
             $("#condition_fs").empty();
             panel.checkRefs();
             ConditionEditor.dialog.dialog("close");
+            Explorer.changeHappened();
         }
     }
 }

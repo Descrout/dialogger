@@ -72,6 +72,7 @@ class DialogEditor {
         editor.getPanel(node.id).checkRefs();
 
         DialogEditor.dialog.dialog("close");
+        Explorer.changeHappened();
     }
 }
 

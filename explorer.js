@@ -39,7 +39,25 @@ class Explorer {
                 editor.getPanel(node.id).focus();
         });
 
-        $("#jsTreeDiv").on('refresh.jstree', () => {
+        tree.bind("loaded.jstree", () => {
+            Explorer.populateStarting(document.getElementById("startingPanel"));
+            Explorer.loadFromLocal();
+        });
+
+        tree.bind("create_node.jstree", () => {
+            Explorer.populateStarting(document.getElementById("startingPanel"));
+        });
+
+        tree.bind("rename_node.jstree", () => {
+            Explorer.populateStarting(document.getElementById("startingPanel"));
+            Explorer.saveToLocal();
+        });
+
+        tree.bind("delete_node.jstree", () => {
+            Explorer.populateStarting(document.getElementById("startingPanel"));
+        });
+
+        tree.bind('refresh.jstree', () => {
             CharacterEditor.refMap = new RefMap();
             const tree = Explorer.tree();
 
@@ -70,6 +88,14 @@ class Explorer {
                 panel.checkRefs();
                 panel.sync();
             }
+
+            const node = tree.get_node("1");
+            if(node.data && node.data.camera) {
+                camera.set(node.data.camera.rawX, node.data.camera.rawY, node.data.camera.scale);
+            }
+
+            Explorer.populateStarting(document.getElementById("startingPanel"));
+            Explorer.saveToLocal();
         });
     }
 
@@ -186,5 +212,45 @@ class Explorer {
         };
     }
 
+    static populateStarting(select) {
+        const tree = Explorer.tree();
+        
+        $("#startingPanel").empty();
+        select.add(new Option("Starting Panel", "undefined"));
 
+        const appendCategory = (label, num) => {
+            const optgroup = document.createElement("optgroup");
+            optgroup.setAttribute("label", label);
+            for (const node_id of tree.get_node(num).children) {
+                const node = tree.get_node(node_id);
+                optgroup.appendChild(new Option(node.text, node.id));
+            }
+            select.appendChild(optgroup);
+        };
+
+        appendCategory("Dialogs", 2);
+        appendCategory("Setters", 3);
+        appendCategory("Conditions", 4);
+
+        const node = Explorer.tree().get_node("1");
+        if(node && node.data) {
+            select.value = node.data.starting;
+            if(!select.value) {
+                select.value = "undefined";
+                node.data.starting = "undefined";
+            }
+        }
+        
+        select.onchange = (e) => {
+            if(node) {
+                node.data.starting = e.target.value;
+                Explorer.changeHappened();
+            }
+        };
+    }
+
+    static changeHappened() {
+        camera.save();
+        Explorer.saveToLocal();
+    }
 }

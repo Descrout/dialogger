@@ -24,7 +24,7 @@ class CharacterEditor {
         }
     });
 
-    static form = this.dialog.find("form").on("submit", function (event) {
+    static form = CharacterEditor.dialog.find("form").on("submit", function (event) {
         event.preventDefault();
         CharacterEditor.finishEditing();
     });

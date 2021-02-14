@@ -19,23 +19,18 @@
   <input type="file" id="saveOpener" style="display:none;">
 
   <div id="jsTreeDiv" style="float: left;height: 100vh;" draggable="false"></div>
-  <div id="resizer" style="width: 2px;float: left;height: 100vh;background-color: rgb(156, 154, 154);cursor: w-resize;"
-    draggable="true"></div>
-  <div style="float: left; height: 7vh; padding-left: 15px; padding-top: 7px;" class="unselectable">
+  
+  <div id="resizer" 
+  style="width: 2px;float: left;height: 100vh;background-color: rgb(156, 154, 154);cursor: w-resize;"
+  draggable="true"></div>
+
+  <div id="topMenu" style="float: left; height: 7vh; padding-left: 15px; padding-top: 7px;overflow: hidden;" class="unselectable">
 
     <button type="button" class="ui-button ui-widget ui-corner-all"
     onclick='Explorer.play()'>Play</button>
 
     <button type="button" class="ui-button ui-widget ui-corner-all" 
     onclick='Explorer.newProject()'>New</button>
-
-    <span style="margin-left: 15px;">Local : </span>
-
-    <button type="button" class="ui-button ui-widget ui-corner-all"
-    onclick='Explorer.loadFromLocal()'>Load</button>
-
-    <button type="button" class="ui-button ui-widget ui-corner-all"
-    onclick='Explorer.saveToLocal()'>Save</button>
 
     <span style="margin-left: 15px;">File : </span>
 
@@ -67,6 +62,7 @@
 
   <div style="float: left;height: 5; padding-left: 15px; padding-top: 7px;" class="unselectable">
     <span id="camPos">0, 0</span>
+    <select style="margin-left:20px;" id="startingPanel" onclick="Explorer.populateStarting(this)"></select>
   </div>
 
   <div id="character-edit" title="Create a character" class="unselectable">

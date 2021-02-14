@@ -65,6 +65,7 @@ class SetterEditor {
             $("#operation_fs").empty();
             panel.checkRefs();
             SetterEditor.dialog.dialog("close");
+            Explorer.changeHappened();
         }
     }
 }

@@ -126,8 +126,10 @@ class LineRider {
     }
 
     draw() {
-        if (!mouseIsPressed || !mouseInScreen())
+        if ((!mouseIsPressed || !mouseInScreen()) && this.dragPoint != -1) {
             this.dragPoint = -1;
+            Explorer.changeHappened();
+        }
 
         if (this.dragPoint != -1) {
             this.saveData.points[this.dragPoint].x += movedX / camera.scale;
@@ -279,7 +281,10 @@ class Panel extends UIElement {
     sync() {
         super.sync();
 
-        if (!mouseIsPressed || !mouseInScreen()) this.dragging = false;
+        if ((!mouseIsPressed || !mouseInScreen()) && this.dragging) {
+            this.dragging = false;
+            Explorer.changeHappened();
+        }
 
         if (this.dragging) {
             this.relativeX += movedX / camera.scale;
@@ -315,6 +320,7 @@ class OptionPanel extends Panel {
 
     calcBottom() {
         this.bottom = this.h + 40 + this.options.length * 40;
+        Explorer.changeHappened();
     }
 
     initLazy() {
@@ -343,6 +349,7 @@ class OptionPanel extends Panel {
 
             if(this.dragOption.from > this.dragOption.to) this.splitOptions(this.dragOption.to, put);
             else this.splitOptions(this.dragOption.to - 1, put);
+            Explorer.changeHappened();
         }
         this.dragOption = null;
     }
