@@ -1,17 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="stylesheet" type="text/css" href="css/play.css">
 	<title>PLAY</title>
 </head>
-<body>
-<script>
-	const dataStr = localStorage.getItem("export");
-	if(!dataStr) {
-		alert("No export found.");
-	}else {
-		const data = JSON.parse(dataStr);
-		console.log(data);
-	}
-</script>
+<body class="unselectable">
+	<div id="upper">
+		<img src="robowoman.png" alt="robowoman" id="avatar">
+		<div id="dialog-text">
+			<span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed feugiat, mauris ac aliquet tempor, ipsum ligula aliquam magna, suscipit tempus purus erat volutpat purus. Fusce ornare ex volutpat sagittis consectetur. Proin ac volutpat ante, ut porttitor risus. Duis volutpat justo eget elit hendrerit, vitae sagittis ipsum hendrerit. Quisque congue, dui id congue elementum, tortor quam mattis orci, vel consectetur mi sapien non ipsum. Nunc in mattis erat. Quisque vel velit sem. Curabitur aliquet suscipit nulla, vitae iaculis nisl ultricies nec. Aenean eleifend et tellus eu rhoncus. Morbi et felis a sem sodales rutrum. Curabitur gravida massa eu scelerisque suscipit.Vivamus eget diam vitae dui pharetra gravida. Donec congue, mauris ultricies elementum convallis, augue nunc congue est, non dictum sem leo vitae lacus. Sed vulputate mollis rutrum. urabitur gravida massa eu scelerisque suscipit.Vivamus eget diam vitae dui pharetra gravida. Donec congue, mauris ultricies elementum convallis, augue nunc congue est, non dictum sem leo vitae lacus. Sed vulputate mollis rutrum.</span>
+		</div>
+	</div>
+	
+	<div id="progress">
+		<div id="bar"></div>
+	</div>
+
+	<div id="bottom">
+		<div class="choice">
+			> Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+		</div>
+		<div class="choice">
+			> Fusce ornare ex volutpat sagittis consectetur.
+		</div>
+		<div class="choice">
+			> Vivamus eget diam vitae dui pharetra gravida. Donec congue, mauris ultricies elementum convallis, augue nunc congue est, non dictum sem leo vitae lacus. Sed vulputate mollis rutrum. urabitur gravida massa eu scelerisque suscipit.Vivamus eget diam vitae dui pharetra gravida.
+		</div>
+		<div class="choice">
+			> Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+		</div>
+		<div class="choice">
+			> Fusce ornare ex volutpat sagittis consectetur.
+		</div>
+		<div class="choice">
+			> Vivamus eget diam vitae dui pharetra gravida. Donec congue, mauris ultricies elementum convallis, augue nunc congue est, non dictum sem leo vitae lacus. Sed vulputate mollis rutrum. urabitur gravida massa eu scelerisque suscipit.Vivamus eget diam vitae dui pharetra gravida.
+		</div>
+		<div class="choice">
+			> Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+		</div>
+		<div class="choice">
+			> Fusce ornare ex volutpat sagittis consectetur.
+		</div>
+		<div class="choice">
+			> Vivamus eget diam vitae dui pharetra gravida. Donec congue, mauris ultricies elementum convallis, augue nunc congue est, non dictum sem leo vitae lacus. Sed vulputate mollis rutrum. urabitur gravida massa eu scelerisque suscipit.Vivamus eget diam vitae dui pharetra gravida.
+		</div>
+	</div>
+	<script src="js/play/play.js"></script>
 </body>
 </html>

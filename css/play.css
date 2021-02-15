@@ -1,0 +1,108 @@
+@import url('modeseven/stylesheet.css');
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background-color: #003058;
+}
+
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@keyframes AlternateOpacity {
+  0%, 100% {
+    opacity: 1.0;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+#avatar{
+  height: 100%;
+  float: left;
+  animation: AlternateOpacity 2.4s ease-out infinite;
+}
+
+#upper {
+  border: 2px solid #bdcede;
+  height: 45vh;
+}
+
+#bottom {
+  border: 2px solid #bdcede;
+  height: 50vh;
+  overflow-y: auto;
+}
+
+#progress {
+  width: 100vw;
+  background-color: #748594;
+  margin: 1vh 0px;
+}
+
+#bar {
+  width: 70vw;
+  background-color: #94c4e5;
+  height: 3vh;
+}
+
+#dialog-text{
+  height: 100%;
+  padding: 5px;
+  overflow-y: auto;
+  text-align: justify;
+  font-size: x-large;
+  color: #bdcede;
+  font-family: 'ModeSeven', sans-serif;
+}
+
+div::-webkit-scrollbar {
+  background-color: #003058;
+}
+
+div::-webkit-scrollbar-thumb {
+  background:#bdcede;
+}
+
+.choice {
+  width: calc(100%-10px);
+  border: 2px solid #bdcede;
+  margin: 10px;
+  padding: 10px;
+
+  background-color: #bbcfe1;
+  color: #003058;
+
+  text-align: justify;
+  font-size: large;
+  font-family: 'ModeSeven', sans-serif;
+}
+
+.choice:hover {
+  animation: ChangeColor 0.4s ease-out 1 forwards;
+}
+
+@keyframes ChangeColor {
+  0% {
+    background-color: #bbcfe1;
+    color: #003058;
+  }
+  100%{
+    background-color: #003058;
+    color: #bbcfe1;
+  }
+}
