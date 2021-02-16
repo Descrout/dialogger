@@ -55,7 +55,7 @@ body {
 }
 
 #bar {
-  width: 70vw;
+  width: 100vw;
   background-color: #94c4e5;
   height: 3vh;
 }
@@ -106,3 +106,17 @@ div::-webkit-scrollbar-thumb {
     color: #bbcfe1;
   }
 }
+
+@keyframes SlowAppear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1.0;
+  }
+}
+
+.fadeIn {
+  animation: SlowAppear 0.3s ease-out;
+}
+
