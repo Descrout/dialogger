@@ -425,8 +425,8 @@ class UIOption extends UIElement {
         this.index = parent.options.length;
         this.relativeY = parent.h + 40 + 40 * this.index;
         
-        this.textButton = new Button(this.data.text, 42, 0, () => {this.parent.optionClicked(this)}, this.w - 84, this.h, 5);
-        this.textButton.color = color(random(255), random(255), random(255)); //placeholder
+        this.textButton = new Button(null, 42, 0, () => {this.parent.optionClicked(this)}, this.w - 84, this.h, 5);
+        this.setText(this.data.text);
 
         this.addChild(new Button("X", 0, 0, () => {this.remove()}, 42, this.h));
         this.addChild(this.textButton);

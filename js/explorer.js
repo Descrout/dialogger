@@ -92,7 +92,7 @@ class Explorer {
             const node = tree.get_node("1");
             if(node.data && node.data.camera) {
                 camera.set(node.data.camera.rawX, node.data.camera.rawY, node.data.camera.scale);
-            }
+            } else camera.reset();
 
             Explorer.populateStarting(document.getElementById("startingPanel"));
             Explorer.saveToLocal();
@@ -120,8 +120,11 @@ class Explorer {
     }
 
     static play() {
+    	const exp = Explorer.export();
+    	if(!exp) return;
+
         localStorage.removeItem("export");
-        localStorage.setItem("export", JSON.stringify(Explorer.export()));
+        localStorage.setItem("export", JSON.stringify(exp));
         window.open("/play.html");
     }
 
@@ -224,8 +227,10 @@ class Explorer {
     }
 
     static save() {
+    	const exp = Explorer.export();
+    	if(!exp) return;
         saveJSON(Explorer.tree().get_json('#'), 'forLoad.json');
-        saveJSON(Explorer.export(), 'forGame.json');
+        saveJSON(exp, 'forGame.json');
     }
 
     static load() {

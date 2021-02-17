@@ -21,7 +21,7 @@ class Camera {
     }
 
     reset() {
-        this.set(0, 0, 1.0);
+       this.set(5000, 5000, 1.0);
     }
 
     drag() {
