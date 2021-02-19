@@ -226,11 +226,19 @@ class Explorer {
         return result;
     }
 
-    static save() {
+    static loadExample() {
+    	Explorer.newProject({"url": "example.json", "dataType": "json"});
+    	camera.set(0, 0, 1.0);
+    }
+
+    static saveExport() {
     	const exp = Explorer.export();
     	if(!exp) return;
-        saveJSON(Explorer.tree().get_json('#'), 'forLoad.json');
-        saveJSON(exp, 'forGame.json');
+    	saveJSON(exp, 'export.json');
+    }
+
+    static save() {
+        saveJSON(Explorer.tree().get_json('#'), 'project.json');
     }
 
     static load() {

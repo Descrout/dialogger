@@ -9,6 +9,9 @@ class UIElement {
         this.relativeY = y;
         this.children = [];
         this.visible = true;
+        this.sColor = 140;
+        this.fColor = 230;
+        this.tColor = 0;
     }
 
     remove(){
@@ -207,7 +210,7 @@ class Panel extends UIElement {
         this.type = "panel";
         this.node = node;
         this.dragging = false;
-        
+
         this.ins = [];
         this.outs = [];
 
@@ -237,8 +240,8 @@ class Panel extends UIElement {
     }
 
     draw() {
-        stroke(140);
-        fill(230);
+        stroke(this.sColor);
+        fill(this.fColor);
         rect(this.x, this.y, this.w, this.h);
     }
 
