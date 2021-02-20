@@ -31,6 +31,8 @@ class GlobalEditor {
         if(GlobalEditor.type === "dialog") {
             $("#choice").val(option.data.text);
             $("#choice-div").css("display", "block");
+        }else {
+            $("#choice-div").css("display", "none");
         }
 
         const global_fs = document.getElementById("global_fs");
