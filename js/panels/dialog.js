@@ -10,6 +10,16 @@ class Dialog extends OptionPanel {
         this.addChild(this.addOptionButton);
     }
 
+    changeText(text) {
+        textSize(12);
+        this.node.data.text = text;
+        const height = (ceil(textWidth(text) / (this.w - 10) )) * 14;
+        this.h = min(350, height + 120);
+        this.addOptionButton.relativeY = this.h;
+        this.bottom = this.h + 40 + this.options.length * 40;
+        this.refreshOptionPositions();
+    }
+
     optionClicked(option) {
         Operation.showAlerts = false;
         GlobalEditor.openEditing(option);
@@ -56,6 +66,8 @@ class Dialog extends OptionPanel {
     initLazy() {
         super.initLazy();
 
+        this.changeText(this.node.data.text);
+
         const saveData = this.node.data.time_path;
         this.timePath = new Node(this.w + 10, 44, saveData, false);
         this.outs.push(this.timePath);
@@ -77,6 +89,6 @@ class Dialog extends OptionPanel {
         fill(0);
         text(`Talker : ${this.characterNode.text}`, this.x + 5, this.y + 55, this.w / 2, 40);
         text(`Time-Limit : ${this.node.data.time_limit}s`, this.x + this.w / 2 + 70, this.y + 55, this.w / 2, 40);
-        text(this.node.data.text, this.x + 5, this.y + 95, 350, this.h - 90);
+        text(this.node.data.text, this.x + 5, this.y + 95, this.w - 10, this.h - 80);
     }
 }

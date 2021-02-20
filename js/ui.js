@@ -167,6 +167,10 @@ class Node extends UIElement {
 
     remove() {
         super.remove();
+        this.clearLine();
+    }
+
+    clearLine() {
         if (this.lineRider) {
             const nextPanel = this.lineRider.to.parent;
             nextPanel.ins = nextPanel.ins.filter((el) => {
@@ -176,7 +180,10 @@ class Node extends UIElement {
     }
 
     mousePressed() {
-        if (mouseButton != LEFT) return;
+        if (mouseButton != LEFT) {
+            this.clearLine();
+            return;
+        }
 
         if (this.receiver)
             editor.nodeStop(this);
@@ -326,6 +333,12 @@ class OptionPanel extends Panel {
         Explorer.changeHappened();
     }
 
+    refreshOptionPositions() {
+        for(const opt of this.options) {
+            opt.refreshPos();
+        }
+    }
+
     initLazy() {
         for(const opt of this.node.data.options) {
             this.addOption(opt);
@@ -426,10 +439,12 @@ class UIOption extends UIElement {
         }
         
         this.index = parent.options.length;
-        this.relativeY = parent.h + 40 + 40 * this.index;
+        this.refreshPos();
         
         this.textButton = new Button(null, 42, 0, () => {this.parent.optionClicked(this)}, this.w - 84, this.h, 5);
         this.setText(this.data.text);
+        if(this.data.operation) this.textButton.color = color(136, 178, 252, 255);
+        else this.textButton.color = color(240, 255);
 
         this.addChild(new Button("X", 0, 0, () => {this.remove()}, 42, this.h));
         this.addChild(this.textButton);
@@ -442,8 +457,10 @@ class UIOption extends UIElement {
         if(operation) {
             this.data.operation = operation;
             this.refs = Operation.getRefs(operation); 
+            this.textButton.color = color(136, 178, 252, 255);
             return true;
         }
+        this.textButton.color = color(240, 255);
         return false;
     }
 
@@ -473,6 +490,10 @@ class UIOption extends UIElement {
 
     setNewIndex(i) {
         this.index = i;
+        this.refreshPos();
+    }
+
+    refreshPos() {
         this.relativeY = this.parent.h + 40 + 40 * this.index;
     }
 

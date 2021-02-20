@@ -51,25 +51,26 @@ class DialogEditor {
 
     static finishEditing() {
         const node = DialogEditor.tempNode;
-
         const charSelect = document.getElementById("select_character");
-        
+        const panel = editor.getPanel(node.id);
+        const selOp = charSelect.options[charSelect.selectedIndex];
+        const dialog_text = $("#dialog_text").val();
+
         Explorer.tree().rename_node(node.id, $("#dialog_name").val());
-        node.data.text = $("#dialog_text").val();
+        if(node.data.text !== dialog_text) panel.changeText(dialog_text);
         node.data.time_limit = $("#time_limit").val();
 
-        const selOp = charSelect.options[charSelect.selectedIndex];
         if (selOp.value != "undefined") {
             node.data.character = selOp.value;
-            editor.getPanel(node.id).characterNode = Explorer.tree().get_node(selOp.value);
+            panel.characterNode = Explorer.tree().get_node(selOp.value);
         }else{
             node.data.character = null;
-            editor.getPanel(node.id).characterNode = {text: "undefined"};
+            panel.characterNode = {text: "undefined"};
         }
 
         DialogEditor.tempNode = null;
 
-        editor.getPanel(node.id).checkRefs();
+        panel.checkRefs();
 
         DialogEditor.dialog.dialog("close");
         Explorer.changeHappened();

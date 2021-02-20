@@ -111,13 +111,8 @@ class Editor {
             node.saveData.type = endNode.parent.type;
             node.saveData.points = points;
 
-            if(this.tempRider.from.lineRider){
-                const before = this.tempRider.from.lineRider.to.parent;
-                before.ins = before.ins.filter((el) => {
-                    return el != node;
-                });
-            }
-
+            this.tempRider.from.clearLine();
+            
             node.lineRider = new LineRider(node.saveData, node, endNode);
             this.tempRider = null;
             Explorer.changeHappened();
