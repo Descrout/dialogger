@@ -4,8 +4,8 @@ class GlobalEditor {
 
 	static dialog = $("#global-edit").dialog({
         autoOpen: false,
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: window.innerWidth / 1.2,
+        height: window.innerHeight / 1.2,
         modal: true,
         buttons: {
             "Save": GlobalEditor.finishEditing,
