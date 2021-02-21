@@ -1,5 +1,5 @@
 # Dialogger
-![show2](./showcase/img2.png)  
+![show2](./showcase/intro.gif)  
 
 Create dialogs with dialogger and make the choices "matter" with setters and conditions. You can check the live version [here.](https://dialogger.netlify.app/) Click on ``Example`` button for a fizzbuzz sample project.  
 
