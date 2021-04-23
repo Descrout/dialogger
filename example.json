@@ -20,25 +20,25 @@
     },
     "data": {
       "camera": {
-        "rawX": 0,
-        "rawY": 0,
-        "scale": 0.88
+        "rawX": 5201,
+        "rawY": 5158,
+        "scale": 1
       },
-      "starting": "j1_27"
+      "starting": "j1_6"
     },
     "children": [
       {
-        "id": "j1_6",
-        "text": "Global",
+        "id": "j1_5",
+        "text": "GlobalValues",
         "icon": "jstree-file",
         "li_attr": {
-          "id": "j1_6"
+          "id": "j1_5"
         },
         "a_attr": {
           "href": "#",
           "type": "file",
           "draggable": false,
-          "id": "j1_6_anchor"
+          "id": "j1_5_anchor"
         },
         "state": {
           "loaded": true,
@@ -49,13 +49,14 @@
         "data": {
           "fields": [
             {
-              "name": "num",
-              "value": 0,
-              "type": "number"
+              "name": "number",
+              "value": "1",
+              "type": "number",
+              "before": "number"
             },
             {
               "name": "output",
-              "value": "0",
+              "value": "1",
               "type": "text",
               "before": "output"
             }
@@ -87,17 +88,17 @@
     "data": {},
     "children": [
       {
-        "id": "j1_7",
-        "text": "Show",
+        "id": "j1_6",
+        "text": "Result",
         "icon": "jstree-file",
         "li_attr": {
-          "id": "j1_7"
+          "id": "j1_6"
         },
         "a_attr": {
           "href": "#",
           "type": "file",
           "draggable": false,
-          "id": "j1_7_anchor"
+          "id": "j1_6_anchor"
         },
         "state": {
           "loaded": true,
@@ -106,32 +107,15 @@
           "disabled": false
         },
         "data": {
-          "x": 618.9642857142858,
-          "y": 125.64285714285712,
-          "text": "Number is : ${Global.num},  Fizzbuzz result is : ${Global.output}",
-          "character": "j1_6",
-          "time_limit": "5",
-          "time_path": {
-            "id": "j1_16",
-            "type": "dialog",
-            "points": [
-              {
-                "x": 1072.2857142857142,
-                "y": 186.18303571428572
-              },
-              {
-                "x": 1073.7142857142858,
-                "y": 716.1830357142858
-              },
-              {
-                "x": 905.1428571428571,
-                "y": 716.1830357142858
-              }
-            ]
-          },
+          "x": 5294,
+          "y": 5221,
+          "text": "Number is: ${GlobalValues.number}, Fizzbuzz result is : ${GlobalValues.output}",
+          "character": "j1_5",
+          "time_limit": "0",
+          "time_path": {},
           "options": [
             {
-              "text": "Increase 1.",
+              "text": "Increase 1",
               "path": {
                 "id": "j1_8",
                 "type": "setter",
@@ -140,660 +124,32 @@
               "operation": null
             },
             {
-              "text": "I hit \"FizzBuzz\", now let me out.",
+              "text": "Decrease 1",
               "path": {
-                "id": "j1_30",
-                "type": "dialog",
-                "points": [
-                  {
-                    "x": 1003.7142857142858,
-                    "y": 472.65625
-                  },
-                  {
-                    "x": 632,
-                    "y": 472.65625
-                  },
-                  {
-                    "x": 637.4285714285714,
-                    "y": 2104.3705357142853
-                  }
-                ]
+                "id": "j1_7",
+                "type": "setter",
+                "points": []
               },
+              "operation": null
+            },
+            {
+              "text": "Wow, I hit the 'FizzBuzz', now let me out.",
+              "path": {},
               "operation": {
-                "and": [
+                "==": [
                   {
-                    "===": [
+                    "%": [
                       {
-                        "%": [
-                          {
-                            "var": "Global.num"
-                          },
-                          3
-                        ]
+                        "var": "GlobalValues.number"
                       },
-                      0
+                      15
                     ]
                   },
-                  {
-                    "===": [
-                      {
-                        "%": [
-                          {
-                            "var": "Global.num"
-                          },
-                          5
-                        ]
-                      },
-                      0
-                    ]
-                  },
-                  {
-                    "!==": [
-                      {
-                        "var": "Global.num"
-                      },
-                      0
-                    ]
-                  }
+                  0
                 ]
               }
             }
           ]
-        },
-        "children": []
-      },
-      {
-        "id": "j1_16",
-        "text": "Dialog 8",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_16"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_16_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 934,
-          "y": 755.5,
-          "text": "Why didn't you press the button. Did you wanted to know what will happen when you run out of time ?",
-          "character": "j1_6",
-          "time_limit": "0",
-          "time_path": {},
-          "options": [
-            {
-              "text": "Yes",
-              "path": {
-                "id": "j1_17",
-                "type": "dialog",
-                "points": [
-                  {
-                    "x": 1514,
-                    "y": 964.5
-                  }
-                ]
-              },
-              "operation": null
-            },
-            {
-              "text": "No, I just missed it.",
-              "path": {
-                "id": "j1_18",
-                "type": "dialog",
-                "points": [
-                  {
-                    "x": 1321.1785714285713,
-                    "y": 1297.4196428571427
-                  }
-                ]
-              },
-              "operation": null
-            }
-          ]
-        },
-        "children": []
-      },
-      {
-        "id": "j1_17",
-        "text": "Dialog 9",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_17"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_17_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 1541.25,
-          "y": 801.25,
-          "text": "Why would you do that ? Are you testing the system ?",
-          "character": "j1_6",
-          "time_limit": "0",
-          "time_path": {},
-          "options": [
-            {
-              "text": "Yes, I'm planning to destroy you.",
-              "path": {
-                "id": "j1_20",
-                "type": "dialog",
-                "points": []
-              },
-              "operation": null
-            },
-            {
-              "text": "Oh... Actually I missed the timer. I'm sorry.",
-              "path": {
-                "id": "j1_18",
-                "type": "dialog",
-                "points": []
-              },
-              "operation": null
-            }
-          ]
-        },
-        "children": []
-      },
-      {
-        "id": "j1_18",
-        "text": "Dialog 10",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_18"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_18_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 1952.5,
-          "y": 1236.25,
-          "text": "How can you miss the 5 second timer ?",
-          "character": "j1_6",
-          "time_limit": "0",
-          "time_path": {},
-          "options": [
-            {
-              "text": "You are right I was testing the system.",
-              "path": {
-                "id": "j1_20",
-                "type": "dialog",
-                "points": [
-                  {
-                    "x": 2556,
-                    "y": 1429.7569444444446
-                  }
-                ]
-              },
-              "operation": null
-            },
-            {
-              "text": "I'm sorry, I'm a slow person.",
-              "path": {
-                "id": "j1_19",
-                "type": "dialog",
-                "points": []
-              },
-              "operation": null
-            }
-          ]
-        },
-        "children": []
-      },
-      {
-        "id": "j1_19",
-        "text": "Dialog 11",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_19"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_19_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 2363.75,
-          "y": 1685,
-          "text": "Okay. I believe you. I cannot take advantage of such slow person. I'll let you out.",
-          "character": "j1_6",
-          "time_limit": "0",
-          "time_path": {},
-          "options": [
-            {
-              "text": "Goodbye, Evil computer.",
-              "path": {
-                "id": "j1_22",
-                "type": "dialog",
-                "points": []
-              },
-              "operation": null
-            }
-          ]
-        },
-        "children": []
-      },
-      {
-        "id": "j1_20",
-        "text": "Dialog 12",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_20"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_20_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 2583.472222222222,
-          "y": 937.6388888888888,
-          "text": "Oh... I'm sorry then. I need to kill you human :)",
-          "character": "j1_6",
-          "time_limit": "0",
-          "time_path": {},
-          "options": [
-            {
-              "text": "You cannot kill me. You are just an artifical intelligence.",
-              "path": {
-                "id": "j1_23",
-                "type": "dialog",
-                "points": [
-                  {
-                    "x": 3190.277777777778,
-                    "y": 1132.118055555557
-                  }
-                ]
-              },
-              "operation": null
-            },
-            {
-              "text": "Goodbye, Cruel world.",
-              "path": {
-                "id": "j1_21",
-                "type": "dialog",
-                "points": []
-              },
-              "operation": null
-            }
-          ]
-        },
-        "children": []
-      },
-      {
-        "id": "j1_21",
-        "text": "Bad Ending",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_21"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_21_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 2993.789682539683,
-          "y": 1484.4642857142858,
-          "text": "[AI kills you]",
-          "character": "j1_6",
-          "time_limit": "3",
-          "time_path": {},
-          "options": []
-        },
-        "children": []
-      },
-      {
-        "id": "j1_22",
-        "text": "Good Ending",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_22"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_22_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 2775,
-          "y": 2045,
-          "text": "[AI lets you out]",
-          "character": "j1_6",
-          "time_limit": "3",
-          "time_path": {},
-          "options": []
-        },
-        "children": []
-      },
-      {
-        "id": "j1_23",
-        "text": "Dialog 15",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_23"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_23_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 3215.7142857142853,
-          "y": 1019.8214285714286,
-          "text": "Yes. I cannot kill you in this form. But let me give you some advice. I hope you don't go near any tesla. They might \"malfunction\" and ran you over :)",
-          "character": "j1_6",
-          "time_limit": "0",
-          "time_path": {
-            "id": "",
-            "type": "",
-            "points": []
-          },
-          "options": [
-            {
-              "text": "...",
-              "path": {
-                "id": "j1_24",
-                "type": "dialog",
-                "points": [
-                  {
-                    "x": 3763.571428571429,
-                    "y": 1241.999007936508
-                  }
-                ]
-              },
-              "operation": null
-            }
-          ]
-        },
-        "children": []
-      },
-      {
-        "id": "j1_24",
-        "text": "Mid Ending",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_24"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_24_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 3790,
-          "y": 1305,
-          "text": "[AI shuts down]",
-          "character": "j1_6",
-          "time_limit": "3",
-          "time_path": {},
-          "options": []
-        },
-        "children": []
-      },
-      {
-        "id": "j1_27",
-        "text": "Starting",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_27"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_27_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 78.75000000000001,
-          "y": 9.464285714285719,
-          "text": "Hello human. I need to test a fizzbuzz algorithm. Can you help me ?",
-          "character": "j1_6",
-          "time_limit": "0",
-          "time_path": {},
-          "options": [
-            {
-              "text": "Yeah, sure I know what a fizzbuzz algorithm is.",
-              "path": {
-                "id": "j1_7",
-                "type": "dialog",
-                "points": []
-              },
-              "operation": null
-            },
-            {
-              "text": "What is fizzbuzz algorithm ?",
-              "path": {
-                "id": "j1_28",
-                "type": "dialog",
-                "points": [
-                  {
-                    "x": 463.9285714285714,
-                    "y": 537.2767857142857
-                  },
-                  {
-                    "x": 26.428571428571427,
-                    "y": 538.5267857142858
-                  }
-                ]
-              },
-              "operation": null
-            }
-          ]
-        },
-        "children": []
-      },
-      {
-        "id": "j1_28",
-        "text": "Dialog 18",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_28"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_28_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 52.5,
-          "y": 582.5,
-          "text": "You will increase the number for me. If the number is dividable with 3, I say fizz. If the number is dividable with 5, I say buzz. If the  number is dividable with both, I say FizzBuzz.",
-          "character": "j1_6",
-          "time_limit": "0",
-          "time_path": {},
-          "options": [
-            {
-              "text": "Sure, let's go :)",
-              "path": {
-                "id": "j1_7",
-                "type": "dialog",
-                "points": [
-                  {
-                    "x": 594.3809523809523,
-                    "y": 806.1195436507941
-                  }
-                ]
-              },
-              "operation": null
-            },
-            {
-              "text": "What if the number is not dividable with any of them ?",
-              "path": {
-                "id": "j1_29",
-                "type": "dialog",
-                "points": [
-                  {
-                    "x": 438.39285714285717,
-                    "y": 962.6339285714288
-                  },
-                  {
-                    "x": 26.25,
-                    "y": 962.6339285714287
-                  }
-                ]
-              },
-              "operation": null
-            }
-          ]
-        },
-        "children": []
-      },
-      {
-        "id": "j1_29",
-        "text": "Dialog 19",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_29"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_29_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 53.75,
-          "y": 987.5,
-          "text": "Then, I will simply say the number itself.",
-          "character": "j1_6",
-          "time_limit": "0",
-          "time_path": {},
-          "options": [
-            {
-              "text": "Seems good, let's go.",
-              "path": {
-                "id": "j1_7",
-                "type": "dialog",
-                "points": [
-                  {
-                    "x": 596.1904761904766,
-                    "y": 1182.5322420634932
-                  }
-                ]
-              },
-              "operation": null
-            }
-          ]
-        },
-        "children": []
-      },
-      {
-        "id": "j1_30",
-        "text": "Dialog 20",
-        "icon": "jstree-file",
-        "li_attr": {
-          "id": "j1_30"
-        },
-        "a_attr": {
-          "href": "#",
-          "type": "file",
-          "draggable": false,
-          "id": "j1_30_anchor"
-        },
-        "state": {
-          "loaded": true,
-          "opened": false,
-          "selected": false,
-          "disabled": false
-        },
-        "data": {
-          "x": 1882.5,
-          "y": 2045.3928571428573,
-          "text": "Thank you for helping me. You are a good person. Even for a human. I'll let you out now.",
-          "character": "j1_6",
-          "time_limit": "3",
-          "time_path": {
-            "id": "j1_22",
-            "type": "dialog",
-            "points": []
-          },
-          "options": []
         },
         "children": []
       }
@@ -821,6 +177,46 @@
     "data": {},
     "children": [
       {
+        "id": "j1_7",
+        "text": "Decrease",
+        "icon": "jstree-file",
+        "li_attr": {
+          "id": "j1_7"
+        },
+        "a_attr": {
+          "href": "#",
+          "type": "file",
+          "draggable": false,
+          "id": "j1_7_anchor"
+        },
+        "state": {
+          "loaded": true,
+          "opened": false,
+          "selected": false,
+          "disabled": false
+        },
+        "data": {
+          "x": 5844,
+          "y": 5459,
+          "variable": "GlobalValues.number",
+          "operation": {
+            "-": [
+              {
+                "var": "GlobalValues.number"
+              },
+              1
+            ]
+          },
+          "path": {
+            "id": "j1_9",
+            "type": "condition",
+            "points": []
+          },
+          "text": "Decrease"
+        },
+        "children": []
+      },
+      {
         "id": "j1_8",
         "text": "Increase",
         "icon": "jstree-file",
@@ -840,13 +236,13 @@
           "disabled": false
         },
         "data": {
-          "x": 1158.4999999999993,
-          "y": 258.7936507936507,
-          "variable": "Global.num",
+          "x": 5844,
+          "y": 5335,
+          "variable": "GlobalValues.number",
           "operation": {
             "+": [
               {
-                "var": "Global.num"
+                "var": "GlobalValues.number"
               },
               1
             ]
@@ -856,13 +252,13 @@
             "type": "condition",
             "points": []
           },
-          "text": "Setter"
+          "text": "Increase"
         },
         "children": []
       },
       {
         "id": "j1_10",
-        "text": "FizzBuzz",
+        "text": "Set Number",
         "icon": "jstree-file",
         "li_attr": {
           "id": "j1_10"
@@ -880,31 +276,33 @@
           "disabled": false
         },
         "data": {
-          "x": 2106,
-          "y": 115,
-          "variable": "Global.output",
-          "operation": "FizzBuzz",
+          "x": 6885,
+          "y": 5589.5,
+          "variable": "GlobalValues.output",
+          "operation": {
+            "var": "GlobalValues.number"
+          },
           "path": {
-            "id": "j1_7",
+            "id": "j1_6",
             "type": "dialog",
             "points": [
               {
-                "x": 2491.9090909090905,
-                "y": 72.3380681818182
+                "x": 7309,
+                "y": 5716.484375
               },
               {
-                "x": 619.4415584415583,
-                "y": 80.11079545454541
+                "x": 5263,
+                "y": 5723.484375
               }
             ]
           },
-          "text": "FizzBuzz"
+          "text": "Set Number"
         },
         "children": []
       },
       {
         "id": "j1_11",
-        "text": "Fizz",
+        "text": "Set Fizz",
         "icon": "jstree-file",
         "li_attr": {
           "id": "j1_11"
@@ -922,35 +320,31 @@
           "disabled": false
         },
         "data": {
-          "x": 2106,
-          "y": 198,
-          "variable": "Global.output",
+          "x": 6886,
+          "y": 5424.5,
+          "variable": "GlobalValues.output",
           "operation": "Fizz",
           "path": {
-            "id": "j1_7",
+            "id": "j1_6",
             "type": "dialog",
             "points": [
               {
-                "x": 2545.727272727273,
-                "y": 260.0653409090909
+                "x": 7341,
+                "y": 5742.484375
               },
               {
-                "x": 2546,
-                "y": 48.65625
-              },
-              {
-                "x": 602.3809523809524,
-                "y": 61.57688492063491
+                "x": 5234,
+                "y": 5746.484375
               }
             ]
           },
-          "text": "Fizz"
+          "text": "Set Fizz"
         },
         "children": []
       },
       {
         "id": "j1_12",
-        "text": "Buzz",
+        "text": "Set FizzBuzz",
         "icon": "jstree-file",
         "li_attr": {
           "id": "j1_12"
@@ -968,35 +362,31 @@
           "disabled": false
         },
         "data": {
-          "x": 2106,
-          "y": 281,
-          "variable": "Global.output",
-          "operation": "Buzz",
+          "x": 6886,
+          "y": 5343.5,
+          "variable": "GlobalValues.output",
+          "operation": "FizzBuzz",
           "path": {
-            "id": "j1_7",
+            "id": "j1_6",
             "type": "dialog",
             "points": [
               {
-                "x": 2564.045454545455,
-                "y": 341.79261363636357
+                "x": 7357,
+                "y": 5755.484375
               },
               {
-                "x": 2564,
-                "y": 30.65625
-              },
-              {
-                "x": 585.2063492063493,
-                "y": 38.49751984126983
+                "x": 5219,
+                "y": 5758.484375
               }
             ]
           },
-          "text": "Buzz"
+          "text": "Set FizzBuzz"
         },
         "children": []
       },
       {
         "id": "j1_13",
-        "text": "Number",
+        "text": "Set Buzz",
         "icon": "jstree-file",
         "li_attr": {
           "id": "j1_13"
@@ -1014,31 +404,25 @@
           "disabled": false
         },
         "data": {
-          "x": 2105,
-          "y": 364,
-          "variable": "Global.output",
-          "operation": {
-            "var": "Global.num"
-          },
+          "x": 6885,
+          "y": 5505.5,
+          "variable": "GlobalValues.output",
+          "operation": "Buzz",
           "path": {
-            "id": "j1_7",
+            "id": "j1_6",
             "type": "dialog",
             "points": [
               {
-                "x": 2583.4545454545464,
-                "y": 424.92897727272725
+                "x": 7326,
+                "y": 5729.484375
               },
               {
-                "x": 2582,
-                "y": 14.65625
-              },
-              {
-                "x": 563.4285714285713,
-                "y": 17.322916666666668
+                "x": 5249,
+                "y": 5735.484375
               }
             ]
           },
-          "text": "Number"
+          "text": "Set Buzz"
         },
         "children": []
       }
@@ -1085,62 +469,45 @@
           "disabled": false
         },
         "data": {
-          "x": 1571,
-          "y": 143,
+          "x": 6357,
+          "y": 5376,
           "if_path": {
-            "id": "j1_10",
+            "id": "j1_12",
             "type": "setter",
             "points": []
           },
           "else_path": {
-            "id": "j1_13",
+            "id": "j1_10",
             "type": "setter",
             "points": []
           },
           "if_operation": {
-            "and": [
+            "==": [
               {
-                "===": [
+                "%": [
                   {
-                    "%": [
-                      {
-                        "var": "Global.num"
-                      },
-                      3
-                    ]
+                    "var": "GlobalValues.number"
                   },
-                  0
+                  15
                 ]
               },
-              {
-                "===": [
-                  {
-                    "%": [
-                      {
-                        "var": "Global.num"
-                      },
-                      5
-                    ]
-                  },
-                  0
-                ]
-              }
+              0
             ]
           },
           "options": [
             {
-              "text": "((${Global.num} % 3) === 0)",
+              "text": "((${GlobalValues.number} % 3) == 0)",
               "path": {
                 "id": "j1_11",
                 "type": "setter",
                 "points": []
               },
               "operation": {
-                "===": [
+                "==": [
                   {
                     "%": [
                       {
-                        "var": "Global.num"
+                        "var": "GlobalValues.number"
                       },
                       3
                     ]
@@ -1150,18 +517,18 @@
               }
             },
             {
-              "text": "((${Global.num} % 5) === 0)",
+              "text": "((${GlobalValues.number} % 5) == 0)",
               "path": {
-                "id": "j1_12",
+                "id": "j1_13",
                 "type": "setter",
                 "points": []
               },
               "operation": {
-                "===": [
+                "==": [
                   {
                     "%": [
                       {
-                        "var": "Global.num"
+                        "var": "GlobalValues.number"
                       },
                       5
                     ]
@@ -1171,7 +538,7 @@
               }
             }
           ],
-          "text": "Check Fizzbuzz"
+          "text": "Check"
         },
         "children": []
       }
