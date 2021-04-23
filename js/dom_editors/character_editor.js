@@ -153,11 +153,13 @@ class CharacterEditor {
                     field.value = e.target.checked;
                     e.target.value = e.target.checked;
                 };
+            }else if(field.type == "number"){
+                valueField.step = 0.01;    
+                
+                valueField.onchange = (e) => {
+                    field.value = parseFloat(e.target.value);
+                };
             }else {
-                if(field.type == "number") {
-                    valueField.step = 0.01;    
-                }
-
                 valueField.onchange = (e) => {
                     field.value = e.target.value;
                 };
